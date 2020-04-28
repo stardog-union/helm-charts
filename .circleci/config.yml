@@ -1,0 +1,60 @@
+version: 2
+jobs:
+   build:
+     machine:
+       image: ubuntu-1604:202004-01
+
+     environment:
+       K8S_VERSION: v1.18.2
+       KUBECONFIG: /home/circleci/.kube/config
+       MINIKUBE_VERSION: v1.9.2
+       MINIKUBE_WANTUPDATENOTIFICATION: false
+       MINIKUBE_WANTREPORTERRORPROMPT: false
+       MINIKUBE_HOME: /home/circleci
+       CHANGE_MINIKUBE_NONE_USER: true
+
+     steps:
+       - checkout
+       - run:
+           name: Setup Helm
+           command: |
+             curl -Lo helm.tar.gz https://get.helm.sh/helm-v3.0.0-linux-amd64.tar.gz
+             tar zxf helm.tar.gz
+             chmod +x linux-amd64/helm
+             sudo mv linux-amd64/helm /usr/local/bin/
+       - run:
+          name: Lint Helm charts
+          command: |
+            helm lint charts/stardog
+       - run:
+          name: Install k8s dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y conntrack
+       - run:
+           name: Setup kubectl
+           command: |
+             curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
+             chmod +x kubectl
+             sudo mv kubectl /usr/local/bin/
+             mkdir -p ${HOME}/.kube
+             touch ${HOME}/.kube/config
+       - run:
+           name: Setup minikube
+           command: |
+             curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/${MINIKUBE_VERSION}/minikube-linux-amd64
+             chmod +x minikube
+             sudo mv minikube /usr/local/bin/
+       - run:
+           name: Start minikube
+           command: |
+             sudo -E minikube start --vm-driver=none --cpus 2 --memory 4096 --kubernetes-version=${K8S_VERSION}
+       - run:
+           name: Setup license
+           command: |
+             echo ${STARDOG_LICENSE} | base64 --decode  > ${HOME}/stardog-license-key.bin
+       - run:
+           name: Helm smoke tests
+           no_output_timeout: 15m
+           command: |
+             ./tests/smoke.sh

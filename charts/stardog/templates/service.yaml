@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-stardog
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-stardog
+    helm.sh/chart: {{ include "stardog.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+spec:
+  ports:
+  - port: {{ .Values.ports.server }}
+    name: server
+  {{- if .Values.ports.sql }}
+  - port: {{ .Values.ports.sql }}
+    name: sql
+  {{- end }}
+  type: LoadBalancer
+  selector:
+    app: {{ .Release.Name }}-stardog

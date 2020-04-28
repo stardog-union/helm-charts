@@ -1,0 +1,16 @@
+apiVersion: v2
+name: stardog
+description: Helm chart to deploy Stardog Cluster and associated services
+version: 1.0.0
+appVersion: latest
+home: https://github.com/stardog-union/helm-charts
+icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
+maintainers:
+  - name: Stardog Union
+    email: tech@stardog.com
+    url: https://www.stardog.com
+dependencies:
+  - name: zookeeper
+    version: 2.1.3
+    repository: http://storage.googleapis.com/kubernetes-charts-incubator
+    condition: zookeeper.enabled

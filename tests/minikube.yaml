@@ -1,0 +1,18 @@
+javaArgs: -Xmx512m -Xms512m -XX:MaxDirectMemorySize=512m
+antiAffinity: preferredDuringSchedulingIgnoredDuringExecution
+resources:
+  requests:
+    cpu: 0
+    memory: 0Gi
+persistence:
+  size: 1Gi
+
+zookeeper:
+  antiAffinity: preferredDuringSchedulingIgnoredDuringExecution
+  resources:
+    requests:
+      cpu: 0
+      memory: 0Gi
+  persistence:
+    size: 1Gi
+    storageClass: standard

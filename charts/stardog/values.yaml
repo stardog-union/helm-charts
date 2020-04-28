@@ -1,0 +1,90 @@
+---
+# The number of Stardog replicas to deploy in the cluster
+replicaCount: 3
+
+# Java args for Stardog server
+javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
+
+# The server port is the port to expose the Stardog server
+# The sql port is the port to expose Stardog's business intelligence server
+ports:
+  server: 5820
+  # sql: 5806
+
+# The location Stardog will use for temporary space (i.e. java.io.tmpdir)
+tmpDir: /tmp
+
+# The initial password for the Stardog admin user
+admin:
+  password: admin
+
+image:
+  registry: https://registry.hub.docker.com/v1/repositories
+  repository: stardog/stardog
+  tag: latest
+  pullPolicy: IfNotPresent
+  # username:
+  # password:
+
+# The storage class and size to use for Stardog home volumes for the pods
+persistence:
+  storageClass: standard
+  size: 5Gi
+
+nodeSelector: {}
+antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
+
+resources: {}
+#  requests:
+#    cpu: 1
+#    memory: 4Gi
+#  limits:
+#    cpu: 2
+#    memory: 6Gi
+
+# Settings to use for the ZooKeeper chart that Stardog depends on.
+# Stardog requires ZooKeeper 3.4.x.
+zookeeper:
+  enabled: true
+  replicaCount: 3
+  podDisruptionBudget:
+    maxUnavailable: 1
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 5Gi
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+  image:
+    repository: stardog/k8szk
+    tag: 3.4.14
+    pullPolicy: IfNotPresent
+  env:
+    ZK_LOG_LEVEL: INFO
+    ZK_DATA_DIR: /data
+    ZK_DATA_LOG_DIR: /data/datalog
+    ZK_LOG_DIR: /data/log
+  command:
+    - /bin/bash
+    - -xec
+    - zkGenConfig.sh && exec zkServer.sh start-foreground
+  livenessProbe:
+    exec:
+      command:
+        - zkOk.sh
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  readinessProbe:
+    exec:
+      command:
+        - zkOk.sh
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1

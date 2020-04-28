@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-stardog
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: {{ include "stardog.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: server
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-stardog
+  serviceName: {{ .Release.Name }}-stardog
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-stardog
+        helm.sh/chart: {{ include "stardog.chart" . }}
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        app.kubernetes.io/component: server
+    spec:
+      affinity:
+        podAntiAffinity:
+          {{ .Values.antiAffinity }}:
+        {{- if eq .Values.antiAffinity "requiredDuringSchedulingIgnoredDuringExecution" }}
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                - {{ .Release.Name }}-stardog
+            topologyKey: "kubernetes.io/hostname"
+        {{- else }}
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - {{ .Release.Name }}-stardog
+              topologyKey: "kubernetes.io/hostname"
+        {{- end }}
+      initContainers:
+      - name: wait-for-zk
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - |
+        {{ if .Values.zookeeper.enabled }}
+         while :
+          do
+            echo "Checking for ZK followers"
+            ZK_MNTR=$(echo mntr | nc {{ .Release.Name }}-zookeeper-headless.{{ .Release.Namespace }} 2181)
+            ZK_FOLLOWERS=$(echo "${ZK_MNTR}" | grep zk_synced_followers | awk '{print $2}')
+            echo "Currently ${ZK_FOLLOWERS} ZK followers"
+            if [[ "${ZK_FOLLOWERS}" -gt "1" ]]; then
+              echo "ZK has two sync'd followers (with the leader that makes 3)"
+              exit 0
+            fi
+            sleep 1
+          done
+        {{ else }}
+          echo "Using existing zookeeper"
+        {{ end }}
+      containers:
+      - name: {{ .Release.Name }}-stardog
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: {{ .Values.ports.server }}
+          name: server
+        {{- if .Values.ports.sql }}
+        - containerPort: {{ .Values.ports.sql }}
+          name: sql
+        {{- end }}
+        volumeMounts:
+        - name: stardog-license
+          mountPath: /etc/stardog-license
+          readOnly: true
+        - name: {{ .Release.Name }}-stardog-password
+          mountPath: /etc/stardog-password
+          readOnly: true
+        - name: data
+          mountPath: /var/opt/stardog/
+        - name: {{ .Release.Name }}-stardog-config
+          mountPath: /etc/stardog-conf
+        env:
+        - name: PORT
+          value: "{{ .Values.ports.server }}"
+        - name: STARDOG_HOME
+          value: "/var/opt/stardog/"
+        - name: STARDOG_LICENSE_PATH
+          value: "/etc/stardog-license/stardog-license-key.bin"
+        - name: STARDOG_PROPERTIES
+          value: "/etc/stardog-conf/stardog.properties"
+        - name: STARDOG_SERVER_JAVA_ARGS
+          value: "-Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          {{ .Files.Get "files/utils.sh" | indent 10 }}
+          cp /etc/stardog-conf/log4j2.xml ${STARDOG_HOME}/log4j2.xml
+          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME} &
+          SD_PID=$!
+          wait_for_start ${PORT}
+          change_pw ${PORT}
+          wait ${SD_PID}
+        livenessProbe:
+          httpGet:
+            path: /admin/alive
+            port: server
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /admin/healthcheck
+            port: server
+          initialDelaySeconds: 90
+          periodSeconds: 5
+          timeoutSeconds: 3
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                /opt/stardog/bin/stardog-admin server stop
+      imagePullSecrets:
+      - name: {{ .Release.Name }}-image-pull-secret
+      volumes:
+      - name: stardog-license
+        secret:
+          secretName: stardog-license
+      - name: {{ .Release.Name }}-stardog-config
+        configMap:
+          name: {{ .Release.Name }}-stardog
+      - name: {{ .Release.Name }}-stardog-password
+        secret:
+          secretName: {{ .Release.Name }}-stardog-password
+          items:
+            - key: password
+              path: adminpw
+              mode: 400
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
