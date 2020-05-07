@@ -1,0 +1,9 @@
+# Chart dependencies
+**/charts/*.tgz
+.deploy
+
+# OSX and IDEs
+.DS_Store
+.idea/
+*.iml
+.vscode
