@@ -141,6 +141,7 @@ spec:
               - -c
               - |
                 /opt/stardog/bin/stardog-admin server stop
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
       volumes:

@@ -2,6 +2,10 @@
 # The number of Stardog replicas to deploy in the cluster
 replicaCount: 3
 
+# The number of seconds to wait for pods to shutdown before
+# killing them forcefully
+terminationGracePeriodSeconds: 300
+
 # Java args for Stardog server
 javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
 
