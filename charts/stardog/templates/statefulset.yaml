@@ -75,7 +75,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-stardog
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
         ports:
         - containerPort: {{ .Values.ports.server }}
           name: server
