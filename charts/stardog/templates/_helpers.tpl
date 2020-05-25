@@ -2,6 +2,18 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" -}}
 {{- end -}}
 
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "stardog.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name "stardog" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}}
+
 {{- define "zkservers" -}}
 {{- $zk := dict "servers" (list) -}}
 {{- $namespace := .Release.Namespace -}}
