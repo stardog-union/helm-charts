@@ -12,7 +12,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- else -}}
 {{- printf "%s-%s" .Release.Name "stardog" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-{{- end -}}}
+{{- end -}}
 
 {{- define "zkservers" -}}
 {{- $zk := dict "servers" (list) -}}
