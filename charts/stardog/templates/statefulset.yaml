@@ -49,6 +49,7 @@ spec:
                   - {{ include "stardog.fullname" . }}
               topologyKey: "kubernetes.io/hostname"
         {{- end }}
+{{ if .Values.initContainers.enabled }}
       initContainers:
       - name: wait-for-zk
         image: busybox
@@ -72,6 +73,7 @@ spec:
         {{ else }}
           echo "Using existing zookeeper"
         {{ end }}
+{{ end }}
       containers:
       - name: {{ include "stardog.fullname" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}{{ if .Values.image.registry }}

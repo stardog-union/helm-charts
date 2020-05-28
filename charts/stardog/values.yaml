@@ -46,6 +46,9 @@ resources: {}
 #    cpu: 2
 #    memory: 6Gi
 
+initContainers:
+  enabled: true
+
 # Settings to use for the ZooKeeper chart that Stardog depends on.
 # Stardog requires ZooKeeper 3.4.x.
 zookeeper:
