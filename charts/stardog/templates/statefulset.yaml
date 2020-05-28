@@ -27,8 +27,6 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
         app.kubernetes.io/component: server
     spec:
-      securityContext:
-        runAsUser: 32000000
       affinity:
         podAntiAffinity:
           {{ .Values.antiAffinity }}:
