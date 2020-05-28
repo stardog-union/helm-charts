@@ -27,6 +27,8 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
         app.kubernetes.io/component: server
     spec:
+      securityContext:
+        runAsUser: 32000000
       affinity:
         podAntiAffinity:
           {{ .Values.antiAffinity }}:
@@ -74,8 +76,9 @@ spec:
         {{ end }}
       containers:
       - name: {{ include "stardog.fullname" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}{{ if .Values.image.registry }}
+        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}{{else}}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}{{ end }}
         ports:
         - containerPort: {{ .Values.ports.server }}
           name: server
@@ -172,15 +175,15 @@ spec:
           items:
             - key: password
               path: adminpw
-              mode: 400
+              mode: 444
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
   volumeClaimTemplates:
   - metadata:
       name: data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: {{ .Values.persistence.storageClass }}
+      accessModes: [ "ReadWriteOnce" ]{{ if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass }}{{ end }}
       resources:
         requests:
           storage: {{ .Values.persistence.size }}
