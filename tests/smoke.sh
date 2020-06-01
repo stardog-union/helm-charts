@@ -37,14 +37,16 @@ function install_stardog() {
 	popd
 }
 
-function helm_install_stardog_cluster() {
-	echo "Installing Stardog Cluster"
-
+function helm_setup_cluster() {
 	echo "Creating stardog namespace"
 	kubectl create ns stardog
 
 	echo "Adding license"
 	kubectl -n ${NAMESPACE} create secret generic stardog-license --from-file stardog-license-key.bin=${HOME}/stardog-license-key.bin
+}
+
+function helm_install_stardog_cluster_with_zookeeper() {
+	echo "Installing Stardog Cluster"
 
 	echo "Running helm install for ${HELM_RELEASE_NAME}"
 
@@ -59,6 +61,33 @@ function helm_install_stardog_cluster() {
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
 	             --set "zookeeper.replicaCount=${NUM_ZKS}"
+	rc=$?
+
+	if [ ${rc} -ne 0 ]; then
+		echo "Helm install for Stardog Cluster failed, exiting"
+		exit ${rc}
+	fi
+
+	echo "Stardog Cluster installed."
+}
+
+function helm_install_single_node_stardog() {
+	echo "Installing Stardog Cluster"
+
+	echo "Running helm install for ${HELM_RELEASE_NAME}"
+
+	pushd charts/stardog/
+	helm dependencies update
+	popd
+
+	helm install ${HELM_RELEASE_NAME} charts/stardog \
+	             --namespace ${NAMESPACE} \
+	             --wait \
+	             --timeout 15m0s \
+	             -f ./tests/minikube.yaml \
+	             --set "cluster.enabled=false" \
+	             --set "replicaCount=1" \
+	             --set "zookeeper.enabled=false"
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
@@ -96,11 +125,12 @@ function check_helm_release_deleted() {
 }
 
 function check_expected_num_stardog_pods() {
-	echo "Checking if there are the expected number of Stardog pods (${NUM_STARDOGS})"
+  local -r num_stardogs=$1
+	echo "Checking if there are the expected number of Stardog pods (${num_stardogs})"
 
 	FOUND_STARDOGS=$(kubectl -n ${NAMESPACE} get pods -o wide | grep "${HELM_RELEASE_NAME}-stardog-" | wc -l)
-	if [ ${FOUND_STARDOGS} -ne ${NUM_STARDOGS} ]; then
-		echo "Found ${FOUND_STARDOGS} but expected ${NUM_STARDOGS} Stardog pods, exiting"
+	if [ ${FOUND_STARDOGS} -ne ${num_stardogs} ]; then
+		echo "Found ${FOUND_STARDOGS} but expected ${num_stardogs} Stardog pods, exiting"
 		exit 1
 	fi
 
@@ -108,11 +138,12 @@ function check_expected_num_stardog_pods() {
 }
 
 function check_expected_num_zk_pods() {
-	echo "Checking if there are the expected number of ZooKeeper pods (${NUM_ZKS})"
+  local -r num_zookeepers=$1
+	echo "Checking if there are the expected number of ZooKeeper pods (${num_zookeepers})"
 
 	FOUND_ZKS=$(kubectl -n ${NAMESPACE} get pods -o wide | grep "${HELM_RELEASE_NAME}-zookeeper-" | wc -l)
-	if [ ${FOUND_ZKS} -ne ${NUM_ZKS} ]; then
-		echo "Found ${FOUND_ZKS} but expected ${NUM_ZKS} ZooKeeper pods, exiting"
+	if [ ${FOUND_ZKS} -ne ${num_zookeepers} ]; then
+		echo "Found ${FOUND_ZKS} but expected ${num_zookeepers} ZooKeeper pods, exiting"
 		exit 1
 	fi
 
@@ -162,14 +193,25 @@ echo "Starting the Helm smoke tests"
 dependency_checks
 minikube_start_tunnel
 install_stardog
-helm_install_stardog_cluster
-check_helm_release_exists
-check_expected_num_stardog_pods
-check_expected_num_zk_pods
-set_stardog_ip
+helm_setup_cluster
 
-echo "Running Stardog tests"
+echo "Test: Stardog 3 node cluster with ZooKeeper"
+helm_install_stardog_cluster_with_zookeeper
+check_helm_release_exists
+check_expected_num_stardog_pods ${NUM_STARDOGS}
+check_expected_num_zk_pods ${NUM_ZKS}
+set_stardog_ip
 create_and_drop_db
+
+echo "Cleaning up Helm deployment"
+helm_delete_stardog_cluster
+check_helm_release_deleted
+
+echo "Test: single node Stardog without ZooKeeper"
+helm_install_single_node_stardog
+check_helm_release_exists
+check_expected_num_stardog_pods 1
+check_expected_num_zk_pods 0
 
 echo "Cleaning up Helm deployment"
 helm_delete_stardog_cluster
