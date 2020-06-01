@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}-stardog
+  name: {{ include "stardog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
@@ -13,13 +13,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-stardog
-  serviceName: {{ .Release.Name }}-stardog
+      app: {{ include "stardog.fullname" . }}
+  serviceName: {{ include "stardog.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-stardog
+        app: {{ include "stardog.fullname" . }}
         helm.sh/chart: {{ include "stardog.chart" . }}
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -36,7 +36,7 @@ spec:
               - key: "app"
                 operator: In
                 values:
-                - {{ .Release.Name }}-stardog
+                - {{ include "stardog.fullname" . }}
             topologyKey: "kubernetes.io/hostname"
         {{- else }}
           - weight: 100
@@ -46,7 +46,7 @@ spec:
                 - key: "app"
                   operator: In
                   values:
-                  - {{ .Release.Name }}-stardog
+                  - {{ include "stardog.fullname" . }}
               topologyKey: "kubernetes.io/hostname"
         {{- end }}
       initContainers:
@@ -73,7 +73,7 @@ spec:
           echo "Using existing zookeeper"
         {{ end }}
       containers:
-      - name: {{ .Release.Name }}-stardog
+      - name: {{ include "stardog.fullname" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         ports:
@@ -87,12 +87,12 @@ spec:
         - name: stardog-license
           mountPath: /etc/stardog-license
           readOnly: true
-        - name: {{ .Release.Name }}-stardog-password
+        - name: {{ include "stardog.fullname" . }}-password
           mountPath: /etc/stardog-password
           readOnly: true
         - name: data
           mountPath: /var/opt/stardog/
-        - name: {{ .Release.Name }}-stardog-config
+        - name: {{ include "stardog.fullname" . }}-config
           mountPath: /etc/stardog-conf
         env:
         - name: PORT
@@ -148,12 +148,12 @@ spec:
       - name: stardog-license
         secret:
           secretName: stardog-license
-      - name: {{ .Release.Name }}-stardog-config
+      - name: {{ include "stardog.fullname" . }}-config
         configMap:
-          name: {{ .Release.Name }}-stardog
-      - name: {{ .Release.Name }}-stardog-password
+          name: {{ include "stardog.fullname" . }}
+      - name: {{ include "stardog.fullname" . }}-password
         secret:
-          secretName: {{ .Release.Name }}-stardog-password
+          secretName: {{ include "stardog.fullname" . }}-password
           items:
             - key: password
               path: adminpw

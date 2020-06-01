@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-stardog
+  name: {{ include "stardog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
@@ -14,7 +14,7 @@ data:
   {{- (.Files.Glob "files/log4j2.xml").AsConfig | nindent 2 }}
 
   {{- (.Files.Glob "files/stardog.properties").AsConfig | nindent 2 }}
-    pack.enabled=true
+    pack.enabled={{ .Values.cluster.enabled }}
     pack.zookeeper.address={{ if .Values.zookeeper.enabled }} {{- template "zkservers" . }} {{ else }} {{ .Values.zookeeper.addresses }} {{ end }}
     pack.node.join.retry.count=15
     pack.node.join.retry.delay=1m
