@@ -95,7 +95,7 @@ function helm_install_single_node_stardog() {
 		exit ${rc}
 	fi
 
-	echo "Stardog Cluster installed."
+	echo "Single node Stardog installed."
 }
 
 function check_helm_release_exists() {
@@ -175,18 +175,18 @@ function create_and_drop_db() {
 	echo "Successfully dropped database."
 }
 
-function helm_delete_stardog_cluster() {
-	echo "Deleting Stardog Cluster"
+function helm_delete_stardog_release() {
+	echo "Deleting Stardog release"
 
 	helm delete ${HELM_RELEASE_NAME} --namespace ${NAMESPACE}
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
-		echo "Helm failed to delete Stardog Cluster, exiting"
+		echo "Helm failed to delete Stardog release, exiting"
 		exit ${rc}
 	fi
 
-	echo "Stardog Cluster deleted."
+	echo "Stardog release deleted."
 }
 
 echo "Starting the Helm smoke tests"
@@ -204,7 +204,7 @@ set_stardog_ip
 create_and_drop_db
 
 echo "Cleaning up Helm deployment"
-helm_delete_stardog_cluster
+helm_delete_stardog_release
 check_helm_release_deleted
 
 echo "Test: single node Stardog without ZooKeeper"
@@ -214,7 +214,7 @@ check_expected_num_stardog_pods 1
 check_expected_num_zk_pods 0
 
 echo "Cleaning up Helm deployment"
-helm_delete_stardog_cluster
+helm_delete_stardog_release
 check_helm_release_deleted
 
 echo "Helm smoke tests completed."
