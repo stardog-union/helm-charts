@@ -72,7 +72,7 @@ function helm_install_stardog_cluster_with_zookeeper() {
 }
 
 function helm_install_single_node_stardog() {
-	echo "Installing Stardog Cluster"
+	echo "Installing single node Stardog"
 
 	echo "Running helm install for ${HELM_RELEASE_NAME}"
 
