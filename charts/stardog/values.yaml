@@ -25,6 +25,9 @@ admin:
 image:
   registry: https://registry.hub.docker.com/v1/repositories
   repository: stardog/stardog
+# Alternative config to pull from Stardog private repository
+  # registry: stardog-eps-docker.jfrog.io
+  # repository: stardog-eps-docker.jfrog.io/stardog
   tag: latest
   pullPolicy: IfNotPresent
   # username:
