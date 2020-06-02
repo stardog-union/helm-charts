@@ -3,6 +3,21 @@ entries:
   stardog:
   - apiVersion: v2
     appVersion: latest
+    created: "2020-06-02T15:17:59.897458-05:00"
+    description: Helm chart to deploy Stardog Cluster and associated services
+    digest: 4e67f980b41198cc667ca7dc0e9c681264d27ee7bf2ce8250feb3af1bb133afe
+    home: https://github.com/stardog-union/helm-charts
+    icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
+    maintainers:
+    - email: tech@stardog.com
+      name: Stardog Union
+      url: https://www.stardog.com
+    name: stardog
+    urls:
+    - https://github.com/stardog-union/helm-charts/releases/download/stardog-1.0.1/stardog-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2020-05-07T12:04:01.842255-05:00"
     description: Helm chart to deploy Stardog Cluster and associated services
     digest: 8beccc6a7310f9f2fd94b85d4a2993a753d65e11a72225fb59bb6811e22a299a
