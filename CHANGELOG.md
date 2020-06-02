@@ -1,6 +1,6 @@
 # 1.0.1 (2020-06-02)
 
-Feature
+Features:
 * Adds flag to disable Stardog Cluster and ZooKeeper (#7)
 * Change default Stardog password via Helm post install hook (#5)
 * Allow user to set the termination grace period for Stardog pods (#1)
