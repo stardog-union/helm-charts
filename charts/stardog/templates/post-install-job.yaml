@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "stardog.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: {{ include "stardog.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ include "stardog.fullname" . }}
+      labels:
+        helm.sh/chart: {{ include "stardog.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        volumeMounts:
+        - name: {{ include "stardog.fullname" . }}-password
+          mountPath: /etc/stardog-password
+          readOnly: true
+        env:
+        - name: PORT
+          value: "{{ .Values.ports.server }}"
+        - name: HOST
+          value: "{{ .Release.Name }}-stardog.{{ .Release.Namespace }}"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          {{ .Files.Get "files/utils.sh" | indent 10 }}
+          wait_for_start ${HOST} ${PORT}
+          change_pw ${HOST} ${PORT}
+      imagePullSecrets:
+      - name: {{ .Release.Name }}-image-pull-secret
+      volumes:
+      - name: {{ include "stardog.fullname" . }}-password
+        secret:
+          secretName: {{ include "stardog.fullname" . }}-password
+          items:
+            - key: password
+              path: adminpw
+              mode: 400

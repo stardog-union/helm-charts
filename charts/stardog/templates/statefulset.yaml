@@ -84,11 +84,11 @@ spec:
           name: sql
         {{- end }}
         volumeMounts:
-        - name: stardog-license
-          mountPath: /etc/stardog-license
-          readOnly: true
         - name: {{ include "stardog.fullname" . }}-password
           mountPath: /etc/stardog-password
+          readOnly: true
+        - name: stardog-license
+          mountPath: /etc/stardog-license
           readOnly: true
         - name: data
           mountPath: /var/opt/stardog/
@@ -114,11 +114,7 @@ spec:
           set -ex
           {{ .Files.Get "files/utils.sh" | indent 10 }}
           cp /etc/stardog-conf/log4j2.xml ${STARDOG_HOME}/log4j2.xml
-          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME} &
-          SD_PID=$!
-          wait_for_start ${PORT}
-          change_pw ${PORT}
-          wait ${SD_PID}
+          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME}
         livenessProbe:
           httpGet:
             path: /admin/alive
@@ -140,7 +136,7 @@ spec:
               - /bin/sh
               - -c
               - |
-                /opt/stardog/bin/stardog-admin server stop
+                /opt/stardog/bin/stardog-admin server stop -u admin -p $(cat /etc/stardog-password/adminpw)
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
