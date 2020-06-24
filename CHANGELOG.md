@@ -1,3 +1,11 @@
+# 1.0.2 (2020-06-24)
+
+Features:
+* Don't include a specific storage class if it's not specified (#13)
+* Only deploy init container if cluster is enabled (#12)
+* Allow override of log4j config (#11)
+* Allow non-root containers to be deployed (#10)
+
 # 1.0.1 (2020-06-02)
 
 Features:
