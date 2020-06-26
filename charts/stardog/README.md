@@ -1,9 +1,9 @@
 Stardog Helm Chart
 ==================
 
-This chart installs Stardog Cluster and a ZooKeeper ensemble, which is required for
-the cluster. The chart pulls the latest version of Stardog from Docker Hub and does
-not support rolling upgrades.
+This chart installs Stardog, either single node or a cluster with a ZooKeeper ensemble,
+which is required for the cluster. The chart pulls the latest version of Stardog from
+Docker Hub and does not support rolling upgrades.
 
 Chart Details
 -------------
@@ -12,7 +12,8 @@ This chart does the following:
 
 - Creates a ZooKeeper ensemble from the incubated ZooKeeper Helm chart
 - Creates a Stardog Cluster StatefulSet configured with readiness and liveness probes
-- Creates a load balanced service for Stardog Cluster
+- Deploys a single node Stardog if the cluster is disabled
+- Creates a load balanced service for Stardog
 - Optionally specify the anti-affinity for the pods
 - Optionally tune resource requests and limits for the pods
 - Optionally tune JVM resources for Stardog
@@ -22,6 +23,8 @@ Configuration Parameters
 
 | Parameter                                    | Description |
 | ---                                          | --- |
+| `fullnameOverride`                           | The k8s name for the Stardog deployment |
+| `cluster.enabled`                            | Enable Stardog Cluster |
 | `replicaCount`                               | The number of replicas in Stardog Cluster |
 | `admin.password`                             | Stardog admin password |
 | `javaArgs`                                   | Java args for Stardog server |
@@ -35,6 +38,11 @@ Configuration Parameters
 | `ports.server`                               | The port to expose Stardog server |
 | `ports.sql`                                  | The port to expose Stardog BI server |
 | `tmpDir`                                     | The directory to use for Stardog tmp space |
+| `log4jConfig.override`                       | Whether to override the default log4j config |
+| `log4jConfig.content`                        | The new log4j configuration |
+| `securityContext.runAsUser`                  | UID used by the Stardog container to run as non-root |
+| `securityContext.runAsGroup`                 | GID used by the Stardog container to run as non-root |
+| `securityContext.fsGroup`                    | GID for the volume mounts |
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.
 
