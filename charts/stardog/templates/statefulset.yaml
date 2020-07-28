@@ -165,7 +165,7 @@ spec:
       - name: {{ include "stardog.fullname" . }}-log4j-vol
         configMap:
           name: {{ include "stardog.fullname" . }}-log4j
-          items: 
+          items:
           - key: log4j2.xml
             path: log4j2.xml
       - name: {{ include "stardog.fullname" . }}-password

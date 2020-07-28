@@ -35,7 +35,7 @@ spec:
         - name: PORT
           value: "{{ .Values.ports.server }}"
         - name: HOST
-          value: "{{ .Release.Name }}-stardog.{{ .Release.Namespace }}"
+          value: "{{ include "stardog.fullname" . }}.{{ .Release.Namespace }}"
         command:
         - /bin/sh
         - -c
