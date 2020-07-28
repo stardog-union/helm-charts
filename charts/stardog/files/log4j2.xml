@@ -24,7 +24,7 @@
 		<File name="zookeeperAppender"
 			  fileName="${LOG_DIR}/${ZOOKEEPER_LOG}.log">
 			<PatternLayout pattern="${PATTERN}"/>
-		</File>
+		</File> 
 	</Appenders>
 	<Loggers>
 		<Root level="WARN">
@@ -47,7 +47,7 @@
 		<!-- redirect all zookeeper records to its own log file -->
 		<Logger name="org.apache.zookeeper" level="INFO" additivity="false">
 			<AppenderRef ref="STDOUT"/>
-			<AppenderRef ref="zookeeperAppender"/>
+			<AppenderRef ref="zookeeperAppender"/> 
 		</Logger>
 
 		<!-- do not edit -->

@@ -53,6 +53,20 @@ resources: {}
 #    cpu: 2
 #    memory: 6Gi
 
+
+# these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
+# if enabled: false, then the whole block is skipped
+securityContext:
+  enabled: false
+  runAsUser: null
+  runAsGroup: null
+  fsGroup: null
+
+log4jConfig:
+  override: false
+  # we provide a default log4j2.xml, if you want to provide your own. in your own values.yaml, set log4Config.override: true, and log4Config.content
+  # content: null
+
 # Settings to use for the ZooKeeper chart that Stardog depends on.
 # Stardog requires ZooKeeper 3.4.x.
 zookeeper:
