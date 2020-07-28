@@ -98,9 +98,6 @@ spec:
         - name: stardog-license
           mountPath: /etc/stardog-license
           readOnly: true
-        - name: {{ include "stardog.fullname" . }}-password
-          mountPath: /etc/stardog-password
-          readOnly: true
         - name: data
           mountPath: /var/opt/stardog/
           readOnly: false
