@@ -9,7 +9,7 @@ function wait_for_start {
     set +e
     while [[ ${RC} -ne 0 ]];
     do
-      if [[ ${COUNT} -gt 300 ]]; then
+      if [[ ${COUNT} -gt 600 ]]; then
           return 1;
       fi
       COUNT=$(expr 1 + ${COUNT} )
@@ -18,7 +18,7 @@ function wait_for_start {
       RC=$?
     done
     # Give it a second to finish starting up
-    sleep 5
+    sleep 20
 
     return 0
     )

@@ -67,6 +67,21 @@ log4jConfig:
   # we provide a default log4j2.xml, if you want to provide your own. in your own values.yaml, set log4Config.override: true, and log4Config.content
   # content: null
 
+# Stardog liveness probe settings. Consider increasing initialDelaySeconds on clouds where
+# storage provisioning is slower. It is not generally required to modify periodSeconds and timeoutSeconds.
+livenessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 15
+
+# Stardog readiness probe settings. Consider increasing initialDelaySeconds when using nodes with
+# K8S nodes with limited CPUs. It is not generally required to modify periodSeconds and timeoutSeconds.
+readinessProbe:
+  initialDelaySeconds: 90
+  periodSeconds: 5
+  timeoutSeconds: 3
+
+
 # Settings to use for the ZooKeeper chart that Stardog depends on.
 # Stardog requires ZooKeeper 3.4.x.
 zookeeper:
