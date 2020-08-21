@@ -2,6 +2,12 @@
 # The number of Stardog replicas to deploy in the cluster
 replicaCount: 3
 
+# The number of seconds the post install job will wait for Stardog to
+# start. This includes the total time to launch the cluster in k8s,
+# including ZooKeeper. Consider increasing it for k8s providers that
+# have slower resource provisioning.
+waitForStartSeconds: 600
+
 cluster:
   # Start Stardog as a cluster
   enabled: true

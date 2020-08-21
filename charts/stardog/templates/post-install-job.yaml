@@ -36,13 +36,15 @@ spec:
           value: "{{ .Values.ports.server }}"
         - name: HOST
           value: "{{ include "stardog.fullname" . }}.{{ .Release.Namespace }}"
+        - name: DELAY
+          value: "{{ .Values.waitForStartSeconds }}"
         command:
         - /bin/sh
         - -c
         - |
           set -ex
           {{ .Files.Get "files/utils.sh" | indent 10 }}
-          wait_for_start ${HOST} ${PORT}
+          wait_for_start ${HOST} ${PORT} ${DELAY}
           change_pw ${HOST} ${PORT}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
