@@ -3,13 +3,14 @@ function wait_for_start {
     (
     HOST=${1}
     PORT=${2}
+    DELAY=${3}
     # Wait for stardog to be running
     RC=1
     COUNT=0
     set +e
     while [[ ${RC} -ne 0 ]];
     do
-      if [[ ${COUNT} -gt 600 ]]; then
+      if [[ ${COUNT} -gt ${DELAY} ]]; then
           return 1;
       fi
       COUNT=$(expr 1 + ${COUNT} )
