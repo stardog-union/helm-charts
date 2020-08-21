@@ -1,3 +1,10 @@
+# 1.0.3 (2020-08-21)
+
+Features:
+* Add option for delay seconds in the post install job (#22)
+* Add paramaterization to K8S liveness and readiness probes (#19)
+* Use templated fullname in post install job (#17)
+
 # 1.0.2 (2020-06-24)
 
 Features:
