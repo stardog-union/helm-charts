@@ -18,6 +18,6 @@ spec:
   - port: {{ .Values.ports.sql }}
     name: sql
   {{- end }}
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   selector:
     app: {{ include "stardog.fullname" . }}
