@@ -1,3 +1,9 @@
+# 1.0.4 (2020-09-11)
+
+Features:
+* Use the security context on the post install job pod (#25)
+* Allow service type to be configurable (#24)
+
 # 1.0.3 (2020-08-21)
 
 Features:
