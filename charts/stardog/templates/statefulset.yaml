@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "stardog.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "stardog.namespace" . }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -67,7 +67,7 @@ spec:
          while :
           do
             echo "Checking for ZK followers"
-            ZK_MNTR=$(echo mntr | nc {{ .Release.Name }}-zookeeper-headless.{{ .Release.Namespace }} 2181)
+            ZK_MNTR=$(echo mntr | nc {{ .Release.Name }}-zookeeper-headless.{{ template "stardog.namespace" . }} 2181)
             ZK_FOLLOWERS=$(echo "${ZK_MNTR}" | grep zk_synced_followers | awk '{print $2}')
             echo "Currently ${ZK_FOLLOWERS} ZK followers"
             if [[ "${ZK_FOLLOWERS}" -gt "1" ]]; then

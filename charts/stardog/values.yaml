@@ -1,4 +1,8 @@
 ---
+# The namespace to deploy the chart into. If not specified
+# .Release.Namespace will be used.
+# namespace: stardog
+
 # The number of Stardog replicas to deploy in the cluster
 replicaCount: 3
 

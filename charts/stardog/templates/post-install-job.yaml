@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "stardog.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "stardog.namespace" . }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -41,7 +41,7 @@ spec:
         - name: PORT
           value: "{{ .Values.ports.server }}"
         - name: HOST
-          value: "{{ include "stardog.fullname" . }}.{{ .Release.Namespace }}"
+          value: "{{ include "stardog.fullname" . }}.{{ template "stardog.namespace" . }}"
         - name: DELAY
           value: "{{ .Values.waitForStartSeconds }}"
         command:
