@@ -65,6 +65,10 @@ function helm_install_stardog_cluster_with_zookeeper() {
 
 	if [ ${rc} -ne 0 ]; then
 		echo "Helm install for Stardog Cluster failed, exiting"
+		echo "Listing pods"
+		kubectl -n ${NAMESPACE} get pods
+		echo "Listing services"
+		kubectl -n ${NAMESPACE} get svc
 		exit ${rc}
 	fi
 

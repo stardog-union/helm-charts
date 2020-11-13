@@ -61,4 +61,4 @@ spec:
           items:
             - key: password
               path: adminpw
-              mode: 400
+              mode: 444

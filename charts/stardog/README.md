@@ -58,6 +58,26 @@ to run the steps on the Stardog home directories in the PVCs.
 See the [Stardog documentation](https://www.stardog.com/docs/#_upgrading_the_cluster)
 for instructuions on how to upgrade Stardog Cluster.
 
+### Upgrading from 1.x to 2.x
+
+Version 2.x of the charts deploys ZooKeeper 3.5 instead of 3.4. Before upgrading the
+charts make sure you have upgraded to Stardog 7.4.2 or later, which includes preview
+support for ZooKeeper 3.5.
+
+After upgrading Stardog you can upgrade the charts by taking down your full deployment
+of Stardog and ZooKeeper pods (but do not delete the PVCs with Stardog home data) by
+following this process:
+- Stop all traffic and updates to your cluster or wait for them to end. You can ensure there
+are no transactions running on a database with `stardog-admin db status <db name>`.
+- Backup Stardog home and copy the backup out of the k8s environment. The
+[Stardog documentation](https://www.stardog.com/docs/#_backing_up_and_restoring) includes
+an overview of the various options for backing up Stardog. Only S3 backups will copy
+data outside of the pods. If you use another backup method you will need to manually
+copy the data off the volume or snapshot the volumes to ensure the data is stored in
+a separate location.
+- Shutdown all Stardog and ZooKeeper pods (e.g. using `helm delete`).
+- Install the new 2.x charts with the same version of Stardog you were running previously.
+
 Limitations
 -----------
 
