@@ -11,6 +11,6 @@ maintainers:
     url: https://www.stardog.com
 dependencies:
   - name: zookeeper
-    version: 2.1.3
-    repository: http://storage.googleapis.com/kubernetes-charts-incubator
+    version: 5.5.1
+    repository: https://charts.bitnami.com/bitnami
     condition: zookeeper.enabled

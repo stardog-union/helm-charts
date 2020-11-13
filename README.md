@@ -8,6 +8,16 @@ These charts install the Stardog Knowledge Graph platform on Kubernetes.
 
 Stardog documentation: https://www.stardog.com/docs
 
+Highlights
+----------
+
+As of version 2.0.0 of the Stardog Helm charts, ZooKeeper 3.5.7 is now deployed
+with the [Bitnami](https://github.com/bitnami/charts/tree/master/bitnami/zookeeper)
+ZooKeeper chart. Stardog 7.4.2 includes preview support for ZooKeeper 3.5.x so you
+must be running that version of Stardog or later. Please see the Stardog chart
+[README](https://github.com/stardog-union/helm-charts/blob/master/charts/stardog/README.md)
+for instructions on how to upgrade from version 1.x of the charts to version 2.
+
 Prerequisites
 -------------
 
