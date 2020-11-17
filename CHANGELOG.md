@@ -1,3 +1,9 @@
+
+# 2.0.0 (2020-11-17)
+
+Features:
+* Migrates to Bitnami ZK chart with ZK 3.5.x (#21)
+
 # 1.0.4 (2020-09-11)
 
 Features:
