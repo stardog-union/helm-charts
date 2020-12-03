@@ -32,7 +32,25 @@ function change_pw {
     PORT=${2}
     NEW_PW=$(cat /etc/stardog-password/adminpw)
     /opt/stardog/bin/stardog-admin --server http://${HOST}:${PORT} user passwd -N ${NEW_PW}
-    RC=$?
-    return ${RC}
+    if [[ $? -eq 0 ]];
+    then
+	    echo "Password successfully changed"
+	    return 0
+    else
+    	curl --fail -u admin:${NEW_PW} http://${HOST}:${PORT}/admin/status
+    	RC=$?
+    	if [[ $RC -eq 0 ]];
+      then
+        echo "Default password was already changed"
+        return 0
+      elif [[ $RC -eq 22 ]]
+      then
+        echo "HTTP 4xx error"
+        return $RC
+      else
+        echo "Something else went wrong"
+        return $RC
+      fi
+    fi
     )
 }
