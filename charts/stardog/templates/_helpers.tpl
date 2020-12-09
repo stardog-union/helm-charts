@@ -16,7 +16,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "zkservers" -}}
 {{- $zk := dict "servers" (list) -}}
-{{- $namespace := .Release.Namespace -}}
+{{- $namespace := include "stardog.namespace" . -}}
 {{- $name := .Release.Name -}}
 {{- range int .Values.zookeeper.replicaCount | until -}}
 {{- $noop := printf "%s-zookeeper-%d.%s-zookeeper-headless.%s:2181" $name . $name $namespace | append $zk.servers | set $zk "servers" -}}
@@ -26,4 +26,15 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "imagePullSecret" -}}
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.registry (printf "%s:%s" .Values.image.username .Values.image.password | b64enc) | b64enc }}
+{{- end -}}
+
+{{/*
+Return Stardog namespace to use
+*/}}
+{{- define "stardog.namespace" -}}
+{{- if .Values.namespaceOverride -}}
+{{- .Values.namespaceOverride -}}
+{{- else -}}
+{{- .Release.Namespace -}}
+{{- end -}}
 {{- end -}}

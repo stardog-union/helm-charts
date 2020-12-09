@@ -24,6 +24,7 @@ Configuration Parameters
 | Parameter                                    | Description |
 | ---                                          | --- |
 | `fullnameOverride`                           | The k8s name for the Stardog deployment |
+| `namespaceOverride`                          | The k8s namespace for the Stardog deployment (single node only) |
 | `cluster.enabled`                            | Enable Stardog Cluster |
 | `replicaCount`                               | The number of replicas in Stardog Cluster |
 | `admin.password`                             | Stardog admin password |
@@ -80,6 +81,10 @@ a separate location.
 
 Limitations
 -----------
+
+At this time namespaceOverride is currently only supported for single-node deploys
+because the downstream ZooKeeper chart does not support namespaceOverride for ZooKeeper
+3.5 deployments.
 
 The chart does not currently support:
 - cache targets

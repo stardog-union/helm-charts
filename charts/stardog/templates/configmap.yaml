@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "stardog.fullname" . }}-log4j
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "stardog.namespace" . }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -18,7 +18,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "stardog.fullname" . }}-properties
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "stardog.namespace" . }}
   labels:
     helm.sh/chart: {{ include "stardog.chart" . }}
     app.kubernetes.io/name: {{ .Chart.Name }}

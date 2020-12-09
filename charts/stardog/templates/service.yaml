@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "stardog.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "stardog.namespace" . }}
   labels:
     app: {{ include "stardog.fullname" . }}
     helm.sh/chart: {{ include "stardog.chart" . }}
