@@ -1,4 +1,7 @@
 ---
+# The namespace for Stardog resources that override the release namespace
+# namespaceOverride: stardog
+
 # The number of Stardog replicas to deploy in the cluster
 replicaCount: 3
 
