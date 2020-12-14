@@ -1,4 +1,10 @@
 
+# 2.0.1 (2020-12-14)
+
+Features:
+* Installing to a namespace with an existing PVC, post-install fails because password was already changed (#35)
+* Allow namespace to be specified in values file (#30)
+
 # 2.0.0 (2020-11-17)
 
 Features:
