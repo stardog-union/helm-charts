@@ -27,6 +27,7 @@ Configuration Parameters
 | `namespaceOverride`                          | The k8s namespace for the Stardog deployment (single node only) |
 | `cluster.enabled`                            | Enable Stardog Cluster |
 | `replicaCount`                               | The number of replicas in Stardog Cluster |
+| `podManagementPolicy`                        | Set the pod startup policy - use `OrderedReady` (default) or `Parallel` |
 | `admin.password`                             | Stardog admin password |
 | `javaArgs`                                   | Java args for Stardog server |
 | `image.registry`                             | The Docker registry containing the Stardog image |
