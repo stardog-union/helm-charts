@@ -16,6 +16,7 @@ spec:
       app: {{ include "stardog.fullname" . }}
   serviceName: {{ include "stardog.fullname" . }}
   replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
   template:
     metadata:
       labels:
