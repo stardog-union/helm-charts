@@ -18,8 +18,6 @@ function wait_for_start {
       curl -v  http://${HOST}:${PORT}/admin/healthcheck
       RC=$?
     done
-    # Give it a second to finish starting up
-    sleep 20
 
     return 0
     )

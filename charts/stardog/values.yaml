@@ -7,13 +7,13 @@ replicaCount: 3
 
 # How to start the pods - use OrderedReady to use the default behavior of
 # starting each pod one at a time or use Parallel to start them all at once
-podManagementPolicy: OrderedReady
+podManagementPolicy: Parallel
 
 # The number of seconds the post install job will wait for Stardog to
 # start. This includes the total time to launch the cluster in k8s,
 # including ZooKeeper. Consider increasing it for k8s providers that
 # have slower resource provisioning.
-waitForStartSeconds: 600
+waitForStartSeconds: 300
 
 cluster:
   # Start Stardog as a cluster
@@ -94,7 +94,7 @@ livenessProbe:
 # Stardog readiness probe settings. Consider increasing initialDelaySeconds when using nodes with
 # K8S nodes with limited CPUs. It is not generally required to modify periodSeconds and timeoutSeconds.
 readinessProbe:
-  initialDelaySeconds: 90
+  initialDelaySeconds: 15
   periodSeconds: 5
   timeoutSeconds: 3
 
