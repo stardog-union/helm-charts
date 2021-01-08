@@ -60,6 +60,11 @@ persistence:
   size: 5Gi
 
 nodeSelector: {}
+tolerations: []
+#  - key: key1
+#    value: value1
+#    effect: NoSchedule
+
 antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
 
 resources: {}
