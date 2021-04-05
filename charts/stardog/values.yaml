@@ -29,6 +29,8 @@ javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
 # The service type to use for Stardog ports
 service:
   type: LoadBalancer
+  annotations: {}
+  # loadBalancerIP: 0.0.0.0
 
 # The server port is the port to expose the Stardog server
 # The sql port is the port to expose Stardog's business intelligence server
