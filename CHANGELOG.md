@@ -1,4 +1,12 @@
 
+# 2.0.2 (2021-06-09)
+
+Features:
+* Allow user to set annotations and loadBalancerIP property of service (#46)
+* Supports tolerations for tainted nodes (#44)
+* Tune chart values and settings to improve startup time (#41)
+* Make podManagementPolicy configurable for Stardog statefulset (#39)
+
 # 2.0.1 (2020-12-14)
 
 Features:
