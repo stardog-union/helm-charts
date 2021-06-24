@@ -1,4 +1,8 @@
 
+# 2.0.3 (Unreleased)
+
+* Remove admin password from post-install job standard out (#48)
+
 # 2.0.2 (2021-06-09)
 
 Features:

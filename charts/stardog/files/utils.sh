@@ -25,9 +25,11 @@ function wait_for_start {
 
 function change_pw {
     (
-    set +e
+    set +ex
     HOST=${1}
     PORT=${2}
+
+    echo "/opt/stardog/bin/stardog-admin --server http://${HOST}:${PORT} user passwd -N xxxxxxxxxxxxxx"
     NEW_PW=$(cat /etc/stardog-password/adminpw)
     /opt/stardog/bin/stardog-admin --server http://${HOST}:${PORT} user passwd -N ${NEW_PW}
     if [[ $? -eq 0 ]];
