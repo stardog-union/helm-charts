@@ -69,10 +69,12 @@ tolerations: []
 
 antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
 
-resources: {}
-#  requests:
-#    cpu: 1
-#    memory: 4Gi
+# Stardog should have at least 2 CPUs. The CPU request value is used to set
+# -XX:ActiveProcessorCount=N for the JVM.
+resources:
+  requests:
+    cpu: 2
+    memory: 4Gi
 #  limits:
 #    cpu: 2
 #    memory: 6Gi
