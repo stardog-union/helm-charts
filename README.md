@@ -18,6 +18,10 @@ must be running that version of Stardog or later. Please see the Stardog chart
 [README](https://github.com/stardog-union/helm-charts/blob/master/charts/stardog/README.md)
 for instructions on how to upgrade from version 1.x of the charts to version 2.
 
+We strongly recommend that the charts request at least 2 CPUs or more for Stardog.
+By default the Stardog chart requests 2 CPUs. This value can be configured in the
+`values.yaml` file.
+
 Prerequisites
 -------------
 
