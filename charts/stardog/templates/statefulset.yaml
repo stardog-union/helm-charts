@@ -122,6 +122,8 @@ spec:
           value: "/etc/stardog-conf/stardog.properties"
         - name: STARDOG_SERVER_JAVA_ARGS
           value: "-XX:ActiveProcessorCount={{ .Values.resources.requests.cpu }}  -Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
+        - name: STARDOG_PERF_JAVA_ARGS
+          value: "{{ .Values.stardogPerfJavaArgs }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
