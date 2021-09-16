@@ -1,6 +1,8 @@
 
-# 2.0.3 (Unreleased)
+# 2.0.3 (2021-09-16)
 
+* Use Java G1 gc by default (#56)
+* Set JVM active processor count to k8s cpu requests, default to 2 (#51)
 * Remove admin password from post-install job standard out (#48)
 
 # 2.0.2 (2021-06-09)
