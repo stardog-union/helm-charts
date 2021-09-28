@@ -28,6 +28,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.registry (printf "%s:%s" .Values.image.username .Values.image.password | b64enc) | b64enc }}
 {{- end -}}
 
+{{- define "imagePullSecretBusybox" -}}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.busybox.image.registry (printf "%s:%s" .Values.busybox.image.username .Values.busybox.image.password | b64enc) | b64enc }}
+{{- end -}}
+
 {{/*
 Return Stardog namespace to use
 */}}

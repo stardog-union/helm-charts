@@ -1,4 +1,8 @@
+# Unreleased
 
+* Provide parameters for setting the origin of the busybox image which is used
+  as a part of the Stardog pod initialization (#60)
+  
 # 2.0.3 (2021-09-16)
 
 * Use Java G1 gc by default (#56)

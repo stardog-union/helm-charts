@@ -110,6 +110,16 @@ readinessProbe:
   periodSeconds: 5
   timeoutSeconds: 3
 
+# The busybox image is used as light weight init container as a part of
+# stardog initialization.
+busybox:
+  image:
+    registry: https://registry.hub.docker.com/v1/repositories
+    repository: busybox
+    tag: stable
+    pullPolicy: IfNotPresent
+    # username:
+    # password:
 
 # Settings to use for the ZooKeeper chart that Stardog depends on.
 # The full set of options can be found on the bitname ZK chart:
@@ -148,3 +158,4 @@ zookeeper:
 #    failureThreshold: 6
 #    successThreshold: 1
 #    probeCommandTimeout: 2
+
