@@ -31,7 +31,8 @@ Configuration Parameters
 | `admin.password`                             | Stardog admin password |
 | `javaArgs`                                   | Java args for Stardog server |
 | `image.registry`                             | The Docker registry containing the Stardog image |
-| `image.repository`                           | The Docker image repostory containing the Stardog image  |
+| `image.repository`                           | The Docker image repository containing the Stardog image  |
+| `image.pullPolicy`                           | The Docker image pullPolicy for Stardog |
 | `image.tag`                                  | The Docker image tag for Stardog |
 | `image.username`                             | The Docker registry username |
 | `image.password`                             | The Docker registry password |
@@ -45,6 +46,12 @@ Configuration Parameters
 | `securityContext.runAsUser`                  | UID used by the Stardog container to run as non-root |
 | `securityContext.runAsGroup`                 | GID used by the Stardog container to run as non-root |
 | `securityContext.fsGroup`                    | GID for the volume mounts |
+| `busybox.image.registry`                     | The Docker registry containing the busybox image (used as a part of Stardog initialization) |
+| `busybox.image.repository`                   | The Docker image repository containing the busybox image (used as a part of Stardog initialization) |
+| `busybox.image.pullPolicy`                   | The Docker image pullPolicy for the busybox image (used as a part of Stardog initialization) |
+| `busybox.image.tag`                          | The Docker image tag for busybox image (used as a part of Stardog initialization) |
+| `busybox.image.username`                     | The Docker registry username for busybox image registry (used as a part of Stardog initialization) |
+| `busybox.image.password`                     | The Docker registry password for the busybox image registry (used as a part of Stardog initialization)  |
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.
 

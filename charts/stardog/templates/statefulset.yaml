@@ -62,7 +62,8 @@ spec:
 {{ if .Values.cluster.enabled }}
       initContainers:
       - name: wait-for-zk
-        image: busybox
+        image: {{ .Values.busybox.image.repository }}:{{ .Values.busybox.image.tag }}
+        imagePullPolicy: {{ .Values.busybox.image.pullPolicy }}
         command:
         - /bin/sh
         - -c
@@ -158,6 +159,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
+      - name: {{ .Release.Name }}-image-busybox-pull-secret
       volumes:
       - name: stardog-license
         secret:
