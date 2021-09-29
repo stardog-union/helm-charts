@@ -40,7 +40,7 @@ Configuration Parameters
 | `persistence.size`                           | The size of volume for Stardog home |
 | `ports.server`                               | The port to expose Stardog server |
 | `ports.sql`                                  | The port to expose Stardog BI server |
-| `tmpDir`                                     | The directory to use for Stardog tmp space |
+| `tmpDir`                                     | The directory to use for Stardog tmp space. If you choose to place this in STARDOG_HOME (/var/opt/stardog) for performance reasons, ensure that it does not conflict with any possible database names. For example, a good choice might be /var/opt/stardog/tmp-4646E7B662A7. If the directory does not exist it will be created. |
 | `log4jConfig.override`                       | Whether to override the default log4j config |
 | `log4jConfig.content`                        | The new log4j configuration |
 | `securityContext.runAsUser`                  | UID used by the Stardog container to run as non-root |
