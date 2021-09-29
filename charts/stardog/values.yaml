@@ -41,7 +41,11 @@ ports:
   server: 5820
   # sql: 5806
 
-# The location Stardog will use for temporary space (i.e. java.io.tmpdir)
+# The location Stardog will use for temporary space (i.e. java.io.tmpdir).
+# If you choose to place this in STARDOG_HOME (/var/opt/stardog) for performance
+# reasons, ensure that it does not conflict with any possible database names.
+# For example, a good choice might be /var/opt/stardog/tmp-4646E7B662A7.
+# If the directory does not exist it will be created.
 tmpDir: /tmp
 
 # The initial password for the Stardog admin user

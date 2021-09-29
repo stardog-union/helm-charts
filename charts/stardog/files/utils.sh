@@ -54,3 +54,18 @@ function change_pw {
     fi
     )
 }
+
+function make_temp {
+    (
+    set +e
+    TEMP_PATH=${1}
+
+    if [ ! -d "$TEMP_PATH" ]; then
+      mkdir -p $TEMP_PATH
+      if [ $? -ne 0 ]; then
+        echo "Could not create stardog tmp directory ${TEMP_PATH}" >&2
+        return 1
+      fi
+    fi
+    )
+}

@@ -125,6 +125,8 @@ spec:
           value: "-XX:ActiveProcessorCount={{ .Values.resources.requests.cpu }}  -Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
         - name: STARDOG_PERF_JAVA_ARGS
           value: "{{ .Values.stardogPerfJavaArgs }}"
+        - name: STARDOG_TMP_PATH
+          value: "{{ .Values.tmpDir }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
@@ -133,6 +135,7 @@ spec:
         - |
           set -ex
           {{ .Files.Get "files/utils.sh" | indent 10 }}
+          make_temp ${STARDOG_TMP_PATH}
           /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME}
         livenessProbe:
           httpGet:
