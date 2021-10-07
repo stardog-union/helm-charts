@@ -32,3 +32,6 @@ data:
     pack.zookeeper.address={{ if .Values.zookeeper.enabled }}{{- template "zkservers" . }}{{ else }}{{ .Values.zookeeper.addresses }}{{ end }}
     pack.node.join.retry.count=15
     pack.node.join.retry.delay=1m
+    {{- range $key, $value := $.Values.additionalStardogProperties }}
+    {{ $key }}={{ $value }}
+    {{- end }}

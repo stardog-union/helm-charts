@@ -163,3 +163,8 @@ zookeeper:
 #    successThreshold: 1
 #    probeCommandTimeout: 2
 
+# Add additional settings to the stardog config file. e.g.
+# additionalStardogProperties:
+#   logging.slow_query.enabled: true
+#   logging.slow_query.time: 10s
+additionalStardogProperties: {}
