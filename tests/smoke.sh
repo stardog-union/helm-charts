@@ -133,7 +133,9 @@ function check_expected_num_stardog_pods() {
 	echo "Checking if there are the expected number of Stardog pods (${num_stardogs})"
 
 	FOUND_STARDOGS=$(kubectl -n ${NAMESPACE} get pods -o wide | grep "${HELM_RELEASE_NAME}-stardog-" | wc -l)
-	if [ ${FOUND_STARDOGS} -ne ${num_stardogs} ]; then
+	# the post install pod for stardog will match here too, but it may disappear before this check runs,
+	# so either ${num_stardogs} or ${num_stardogs} + 1 is fine here
+	if [[ ${FOUND_STARDOGS} -lt ${num_stardogs} || ${FOUND_STARDOGS} -gt $((num_stardogs+1)) ]]; then
 		echo "Found ${FOUND_STARDOGS} but expected ${num_stardogs} Stardog pods, exiting"
 		exit 1
 	fi
