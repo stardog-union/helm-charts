@@ -168,5 +168,3 @@ zookeeper:
 #   logging.slow_query.enabled=true
 #   logging.slow_query.time=10s
 additionalStardogProperties: |
-  
-myvalue: test
