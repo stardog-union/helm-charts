@@ -26,6 +26,9 @@ terminationGracePeriodSeconds: 300
 # Java args for Stardog server
 javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
 
+# Additional arguments passed to Stardog at server start
+serverStartArgs: ""
+
 # Stardog Java perf args, e.g. for changing Java gc
 stardogPerfJavaArgs: "-XX:SoftRefLRUPolicyMSPerMB=1 -XX:+UseG1GC -XX:+UseCompressedOops"
 

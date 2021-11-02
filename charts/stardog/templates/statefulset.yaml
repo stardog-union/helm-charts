@@ -127,6 +127,8 @@ spec:
           value: "{{ .Values.stardogPerfJavaArgs }}"
         - name: STARDOG_TMP_PATH
           value: "{{ .Values.tmpDir }}"
+        - name: STARDOG_SERVER_START_ARGS
+          value: "{{ .Values.serverStartArgs }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
@@ -136,7 +138,7 @@ spec:
           set -ex
           {{ .Files.Get "files/utils.sh" | indent 10 }}
           make_temp ${STARDOG_TMP_PATH}
-          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME}
+          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME} ${STARDOG_SERVER_START_ARGS}
         livenessProbe:
           httpGet:
             path: /admin/alive

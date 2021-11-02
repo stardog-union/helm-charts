@@ -30,6 +30,7 @@ Configuration Parameters
 | `podManagementPolicy`                        | Set the pod startup policy - use `OrderedReady` (default) or `Parallel` |
 | `admin.password`                             | Stardog admin password |
 | `javaArgs`                                   | Java args for Stardog server |
+| `serverStartArgs`                            | Additional arguments for Stardog server start |
 | `image.registry`                             | The Docker registry containing the Stardog image |
 | `image.repository`                           | The Docker image repository containing the Stardog image  |
 | `image.pullPolicy`                           | The Docker image pullPolicy for Stardog |

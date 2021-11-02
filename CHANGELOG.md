@@ -1,7 +1,7 @@
 # Unreleased
 
 * Added the ability to add additional settings to the configmap of the stardog configmap
-
+* Add Stardog server start arguments to the values file (#66)
 * Provide parameters for setting the origin of the busybox image which is used
   as a part of the Stardog pod initialization (#60)
 * Create the tmpDir used by Stardog if it doesn't already exist. This can be useful when
