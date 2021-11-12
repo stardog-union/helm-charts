@@ -117,6 +117,12 @@ readinessProbe:
   periodSeconds: 5
   timeoutSeconds: 3
 
+# Add additional settings to the stardog config file. e.g.
+# additionalStardogProperties: |
+#   logging.slow_query.enabled=true
+#   logging.slow_query.time=10s
+additionalStardogProperties: |
+
 # The busybox image is used as light weight init container as a part of
 # stardog initialization.
 busybox:
@@ -165,4 +171,3 @@ zookeeper:
 #    failureThreshold: 6
 #    successThreshold: 1
 #    probeCommandTimeout: 2
-
