@@ -1,6 +1,6 @@
-# Unreleased
+# 2.0.4 (2021-12-07)
 
-* Added the ability to add additional settings to the configmap of the stardog configmap
+* Added the ability to add additional settings to the configmap of the stardog configmap (#50). 
 * Add Stardog server start arguments to the values file (#66)
 * Provide parameters for setting the origin of the busybox image which is used
   as a part of the Stardog pod initialization (#60)
