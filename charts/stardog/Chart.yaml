@@ -4,7 +4,7 @@ description: Helm chart to deploy Stardog Cluster and associated services
 version: 2.0.4
 appVersion: latest
 home: https://github.com/stardog-union/helm-charts
-icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
+icon: file://stardog-logo.png
 maintainers:
   - name: Stardog Union
     email: tech@stardog.com
