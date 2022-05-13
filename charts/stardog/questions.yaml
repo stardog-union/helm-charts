@@ -6,8 +6,20 @@ categories:
 - Graph
 namespace: stardog
 questions:
+- variable: cluster.enabled
+  group: "Cluster Sizing and Replication"
+  type: boolean
+  default: true
+  description: Enable Stardog Server cluster configuration
+- variable: replicaCount
+  group: "Cluster Sizing and Replication"
+  default: 3
+  type: int
+  description: Number of Pods (Servers) in Stardog cluster
+  label: "# replicas"
+
 - variable: image.defaultImage
-  group: "Stardog images"
+  group: "Stardog Server images"
   default: "true"
   description: Use the default Stardog image (recommended)
   label: "Use default image"
@@ -30,16 +42,6 @@ questions:
     description: "Specify Stardog Server image tag/version"
     label: Tag
 
-- variable: cluster.enabled
-  type: boolean
-  default: true
-  description: Enable Stardog Server cluster configuration
-- variable: replicaCount
-  group: "Cluster Sizing and Replication"
-  default: 3
-  type: int
-  description: Number of Pods (Servers) in Stardog cluster
-  label: "# replicas"
 - variable: resources.requests.cpu
   group: "Resources"
   default: 2000m
