@@ -85,8 +85,11 @@ questions:
   label: Storage class name
 
 - variable: securityContext.enabled
+  group: "Security Context
   type: boolean
   default: true
+  description: "Run as specific user and group in the container - required where root user in containers is disabled."
+  label: "Set security context"
   show_subquestion_if: true
   subquestions:
   - variable: securityContext.runAsUser
