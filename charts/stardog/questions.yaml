@@ -1,3 +1,6 @@
+# TODO: add Zookeeper section
+# TODO: fix variables that cannot be changed when cluster.enabled is false
+# TODO: Add port section including type (LoadBalancer,NodePort etc)
 categories:
 - Database
 - Graph
@@ -6,116 +9,141 @@ questions:
 - variable: image.defaultImage
   group: "Stardog images"
   default: "true"
-  description: Use the default Stardog Kubernetes image (recommended)
+  description: Use the default Stardog image (recommended)
   label: "Use default image"
   type: boolean
   show_subquestion_if: false
   subquestions:
+  - variable: image.registry
+    type: string
+    default: https://registry.hub.docker.com/v1/repositories
+    description: Image registry
+    label: Registry
   - variable: image.repository
     type: string
-    default: docker.tigergraph.com/tigergraph-k8s
-    description: Specify Stardog Kubernetes image
+    default: stardog/stardog
+    description: Stardog Server image
     label: Image
   - variable: image.tag
     type: string
-    default: "3.2.0"
-    description: "Specify Stardog Kubernetes image tag"
+    default: "latest"
+    description: "Specify Stardog Server image tag/version"
     label: Tag
 
+- variable: cluster.enabled
+  type: boolean
+  default: true
+  description: Enable Stardog Server cluster configuration
 - variable: replicaCount
   group: "Cluster Sizing and Replication"
   default: 3
   type: int
   description: Number of Pods (Servers) in Stardog cluster
   label: "# replicas"
-- variable: ha
-  group: "Cluster Sizing and Replication"
-  default: 1
-  type: int
-  description: "Stardog Cluster High Availability Setting"
-  label: ha
 - variable: resources.requests.cpu
   group: "Resources"
-  default: 4000m
+  default: 2000m
   type: string
-  description: Minimum CPU to reserve
+  description: Minimum CPU to reserve (fractional or 1000m format)
   label: CPU
 - variable: resources.requests.memory
   group: "Resources"
   default: 8Gi
   type: string
-  description: Minimum Memory to reserve
-  label: Memory with Mi or Gi
+  description: Minimum Memory to reserve (Mi/M, Gi/G etc)
+  label: Memory
 
-- variable: nodeSelector
-  group: "Node selector"
-  type: boolean
-  default: {}
-  description: "A simple means to schedule on nodes with a specific label"
-  label: "Use node selector"
-  show_subquestion_if: true
-  subquestions:
-  - variable: nodeSelector.label
-    type: string
-    description: "Label key"
-    label: "Key"
-  - variable: nodeSelector.value
-    type: string
-    description: "Label value"
-    label: "Value"
+# - variable: nodeSelector
+#   group: "Node selector"
+#   type: boolean
+#   default: {}
+#   description: "A simple means to schedule on nodes with a specific label"
+#   label: "Use node selector"
+#   show_subquestion_if: true
+#   subquestions:
+#   - variable: nodeSelector.label
+#     type: string
+#     description: "Label key"
+#     label: "Key"
+#   - variable: nodeSelector.value
+#     type: string
+#     description: "Label value"
+#     label: "Value"
 
-- variable: dataVolume.size
+- variable: persistence.size
   group: "Data volume"
-  description: "Size of Stardog DataRoot, mounted to all StatefulSet pods"
-  default: 56Gi
+  description: "Size of Stardog home volume"
+  default: 5Gi
   type: string
   label: Size of persistent volume
 - variable: dataVolume.storageClass
   group: "Data volume"
-  description: "Storage class used for Stardog DataRoot"
+  description: "Storage class used for Stardog home volume - leave empty to use default storage class on the k8s cluster"
   type: string
-  label: Storage class name or empty for default
-- variable: dataVolume.accessMode
-  group: "Data volume"
-  description: "Access mode for DataRoot volume, usually ReadWriteOnce"
-  default: ReadWriteOnce
-  type: enum
-  options:
-  - "ReadWriteOnce"
-  - "ReadWriteMany"
-  - "ReadWriteOncePod"
-  label: Access mode
+  label: Storage class name
 
-- variable: ingestVolume.create
-  group: "Optional ingest volume"
+- variable: securityContext.enabled
   type: boolean
-  default: false
-  description: "Optionally mount a persistent volume on all StatefulSet pods to help with data ingest"
-  label: "Mount optional ingest volume"
+  default: true
   show_subquestion_if: true
   subquestions:
-  - variable: ingestVolume.mountPath
-    type: string
-    default: "/home/tigergraph/mydata"
-    description: "Mount point for ingest volume"
-    label: "ingest mount point"
-  - variable: ingestVolume.size
-    type: string
-    default: "22Gi"
-    description: "Size of ingest volume"
-    label: "size"
-  - variable: ingestVolume.storageClass
-    type: string
-    description: "Storage class for ingest volume - use empty string for default storage class"
-    label: "storage class"
-  - variable: ingestVolume.accessMode
-    type: enum
-    options:
-    - "ReadWriteOnce"
-    - "ReadWriteMany"
-    - "ReadWriteOncePod"
-    description: "Access mode for ingest volume, usually ReadWriteOnce"
-    label: "access mode"
+  - variable: securityContext.runAsUser
+    type: integer
+    default: 1000
+    description: "Run as user <UID> (user stardog is 1000 in default container)"
+    label: UID
+  - variable: securityContext.runAsGroup
+    type: integer
+    default: 1000
+    description: "Run as group <GID> (group stardog is 1000 in default container)"
+    label: GID
+  - variable: securityContext.fsGroup
+    type: integer
+    default: 1000
+    description: "File system group <GID> (group stardog is 1000 in default container)"
+    label: File system GID
+
+# - variable: dataVolume.accessMode
+#   group: "Data volume"
+#   description: "Access mode for DataRoot volume, usually ReadWriteOnce"
+#   default: ReadWriteOnce
+#   type: enum
+#   options:
+#   - "ReadWriteOnce"
+#   - "ReadWriteMany"
+#   - "ReadWriteOncePod"
+#   label: Access mode
+
+# - variable: ingestVolume.create
+#   group: "Optional ingest volume"
+#   type: boolean
+#   default: false
+#   description: "Optionally mount a persistent volume on all StatefulSet pods to help with data ingest"
+#   label: "Mount optional ingest volume"
+#   show_subquestion_if: true
+#   subquestions:
+#   - variable: ingestVolume.mountPath
+#     type: string
+#     default: "/home/tigergraph/mydata"
+#     description: "Mount point for ingest volume"
+#     label: "ingest mount point"
+#   - variable: ingestVolume.size
+#     type: string
+#     default: "22Gi"
+#     description: "Size of ingest volume"
+#     label: "size"
+#   - variable: ingestVolume.storageClass
+#     type: string
+#     description: "Storage class for ingest volume - use empty string for default storage class"
+#     label: "storage class"
+#   - variable: ingestVolume.accessMode
+#     type: enum
+#     options:
+#     - "ReadWriteOnce"
+#     - "ReadWriteMany"
+#     - "ReadWriteOncePod"
+#     description: "Access mode for ingest volume, usually ReadWriteOnce"
+#     label: "access mode"
 
 # - variable: autoscaling.enabled
 #   group: "Auto-scaling"
