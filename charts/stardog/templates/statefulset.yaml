@@ -130,7 +130,7 @@ spec:
         - name: STARDOG_SERVER_START_ARGS
           value: "{{ .Values.serverStartArgs }}"
         resources:
-{{ toYaml .Values.resources | indent 10 }}
+          {{ toYaml .Values.resources | indent 10 }}
         command:
         - /bin/sh
         - -c
@@ -161,6 +161,11 @@ spec:
               - -c
               - |
                 /opt/stardog/bin/stardog-admin server stop -u admin -p $(cat /etc/stardog-password/adminpw)
+      - name: stardog-metrics-exporter
+        image: gregoryg/stardog-metrics-exporter:0.7
+        ports:
+        - containerPort: 9820
+          name: metrics
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret

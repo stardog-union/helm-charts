@@ -108,6 +108,24 @@ questions:
     description: "File system group <GID> (group stardog is 1000 in default container)"
     label: File system GID
 
+# Metrics Server
+
+- variable: metrics.enabled
+  group: "Metrics"
+  type: boolean
+  default: false
+  description: "Enable Stardog Prometheus metrics exporter"
+  label: Enable Stardog Metrics
+  show_subquestion_if: true
+  subquestions:
+  - variable: metrics.serviceMonitor.enabled
+    default: false
+    description: "Set this to `true` to create ServiceMonitor for Prometheus Operator / Rancher Monitoring"
+    type: boolean
+    label: "Create Stardog ServiceMonitor"
+
+
+
 # - variable: dataVolume.accessMode
 #   group: "Data volume"
 #   description: "Access mode for DataRoot volume, usually ReadWriteOnce"

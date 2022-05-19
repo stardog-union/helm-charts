@@ -98,6 +98,11 @@ securityContext:
   runAsGroup: null
   fsGroup: null
 
+metrics:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+
 log4jConfig:
   override: false
   # we provide a default log4j2.xml, if you want to provide your own. in your own values.yaml, set log4Config.override: true, and log4Config.content
