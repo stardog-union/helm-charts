@@ -22,5 +22,5 @@ spec:
   selector:
     matchLabels:
       app: {{ include "stardog.fullname" . }}
-      release: {{ .Release.Name }}
+      app.kubernetes.io/component: metrics
 {{- end }}
