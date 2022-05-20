@@ -161,6 +161,7 @@ spec:
               - -c
               - |
                 /opt/stardog/bin/stardog-admin server stop -u admin -p $(cat /etc/stardog-password/adminpw)
+      {{- if .Values.metrics.enabled }}
       - name: stardog-metrics-exporter
         image: nginx:alpine
         ports:
@@ -168,13 +169,17 @@ spec:
           name: metrics
           protocol: TCP
         volumeMounts:
-        - mountPath: /etc/nginx
-          name: nginxconf
-        - mountPath: /code
-          name: collectorsh
-        - mountPath: /usr/share/nginx/stardog-metrics
-          name: metricsvol
+        - name: {{ include "stardog.fullname" . }}-password
+          mountPath: /etc/stardog-password
+          readOnly: true
+        - name: nginxconf
+          mountPath: /etc/nginx
+        - name: collectorsh
+          mountPath: /code
+        - name: metricsvol
+          mountPath: /usr/share/nginx/stardog-metrics
         command: ["/bin/sh", "/code/collector.sh"]
+      {{- end }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
