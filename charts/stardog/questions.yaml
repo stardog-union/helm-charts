@@ -78,11 +78,18 @@ questions:
   default: 5Gi
   type: string
   label: Size of persistent volume
-- variable: dataVolume.storageClass
+- variable: persistence.storageClass
   group: "Data volume"
-  description: "Storage class used for Stardog home volume - leave empty to use default storage class on the k8s cluster"
+  description: "Storage class used for Stardog home volume"
   type: string
-  label: Storage class name
+  default: "standard"
+  label: Data volume storage class
+- variable: zookeeper.persistence.storageClass
+  group: "Data volume"
+  description: "Storage class used for Zookeeper volume"
+  type: string
+  default: "standard"
+  label: ZK volume storage class
 
 - variable: securityContext.enabled
   group: "Security Context"
