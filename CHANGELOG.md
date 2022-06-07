@@ -1,3 +1,7 @@
+# 2.0.5 (2022-06-07)
+
+* Patch the zookeeper dependency in stardog chart a result of change in the bitnami retention policy (#71)
+
 # 2.0.4 (2021-12-07)
 
 * Added the ability to add additional settings to the configmap of the stardog configmap (#50). 
