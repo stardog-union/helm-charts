@@ -174,11 +174,14 @@ spec:
           readOnly: true
         - name: nginxconf
           mountPath: /etc/nginx
-        - name: collectorsh
-          mountPath: /code
         - name: metricsvol
           mountPath: /usr/share/nginx/stardog-metrics
-        command: ["/bin/sh", "/code/collector.sh"]
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          {{ .Files.Get "files/collector.sh" | indent 10 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       imagePullSecrets:
@@ -210,9 +213,6 @@ spec:
       - name: nginxconf
         configMap:
           name: stardog-metrics-nginx-conf
-      - name: collectorsh
-        configMap:
-          name: stardog-metrics-collector-sh
       - name: metricsvol
         emptyDir: {}
       nodeSelector:

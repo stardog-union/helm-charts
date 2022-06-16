@@ -80,7 +80,7 @@ questions:
   label: Size of persistent volume
 - variable: persistence.storageClass
   group: "Data volume"
-  description: "Storage class used for Stardog home volume"
+  description: "Storage class used for Stardog home volume - leave empty to use default StorageClass on cluster"
   type: string
   default: "standard"
   label: Data volume storage class
