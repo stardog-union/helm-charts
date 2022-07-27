@@ -171,3 +171,21 @@ zookeeper:
 #    failureThreshold: 6
 #    successThreshold: 1
 #    probeCommandTimeout: 2
+
+# Settings for enable ingress controller. 
+ingress:
+  enabled: false
+  annotations: {}
+  # nginx.ingress.kubernetes.io/use-regex: "true"
+  # nginx.ingress.kubernetes.io/app-root: "/admin/alive"
+  # kubernetes.io/tls-acme: "true" 
+  #className: "nginx" 
+  #pathtype: Prefix
+  hosts: []
+    # - host: chart-example.local
+    #   paths:
+    #     - path: /
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
