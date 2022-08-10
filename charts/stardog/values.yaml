@@ -93,10 +93,10 @@ resources:
 # these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
 # if enabled: false, then the whole block is skipped
 securityContext:
-  enabled: false
-  runAsUser: null
-  runAsGroup: null
-  fsGroup: null
+  enabled: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
 
 log4jConfig:
   override: false
