@@ -57,7 +57,7 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	helm install ${HELM_RELEASE_NAME} charts/stardog \
 	             --namespace ${NAMESPACE} \
 	             --wait \
-	             --timeout 15m0s \
+	             --timeout 19m0s \
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
 	             --set "zookeeper.replicaCount=${NUM_ZKS}"
