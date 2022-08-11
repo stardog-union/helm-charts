@@ -69,6 +69,10 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		kubectl -n ${NAMESPACE} get pods
 		echo "Listing services"
 		kubectl -n ${NAMESPACE} get svc
+		echo "Logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0
+		echo "Previous logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0 --previous
 		exit ${rc}
 	fi
 
