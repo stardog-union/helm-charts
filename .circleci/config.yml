@@ -55,6 +55,6 @@ jobs:
              echo ${STARDOG_LICENSE} | base64 --decode  > ${HOME}/stardog-license-key.bin
        - run:
            name: Helm smoke tests
-           no_output_timeout: 16m
+           no_output_timeout: 20m
            command: |
              ./tests/smoke.sh
