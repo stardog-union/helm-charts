@@ -79,7 +79,7 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		echo "Get jobs:"
 		kubectl get jobs -n ${NAMESPACE}
 		echo "helm list --all:"
-		helm list --all
+		helm list --all -n ${NAMESPACE}
 		exit ${rc}
 	fi
 
