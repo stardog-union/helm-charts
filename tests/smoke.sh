@@ -214,24 +214,24 @@ helm_setup_cluster
 
 echo "Test: Stardog 3 node cluster with ZooKeeper"
 helm_install_stardog_cluster_with_zookeeper
-check_helm_release_exists
-check_expected_num_stardog_pods ${NUM_STARDOGS}
-check_expected_num_zk_pods ${NUM_ZKS}
-set_stardog_ip
-create_and_drop_db
+# check_helm_release_exists
+# check_expected_num_stardog_pods ${NUM_STARDOGS}
+# check_expected_num_zk_pods ${NUM_ZKS}
+# set_stardog_ip
+# create_and_drop_db
 
-echo "Cleaning up Helm deployment"
-helm_delete_stardog_release
-check_helm_release_deleted
+# echo "Cleaning up Helm deployment"
+# helm_delete_stardog_release
+# check_helm_release_deleted
 
-echo "Test: single node Stardog without ZooKeeper"
-helm_install_single_node_stardog
-check_helm_release_exists
-check_expected_num_stardog_pods 1
-check_expected_num_zk_pods 0
+# echo "Test: single node Stardog without ZooKeeper"
+# helm_install_single_node_stardog
+# check_helm_release_exists
+# check_expected_num_stardog_pods 1
+# check_expected_num_zk_pods 0
 
-echo "Cleaning up Helm deployment"
-helm_delete_stardog_release
-check_helm_release_deleted
+# echo "Cleaning up Helm deployment"
+# helm_delete_stardog_release
+# check_helm_release_deleted
 
 echo "Helm smoke tests completed."
