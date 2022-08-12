@@ -61,6 +61,7 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
 	             --set "zookeeper.replicaCount=${NUM_ZKS}"
+				 --debug
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
@@ -77,6 +78,8 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		kubectl describe pod stardog-helm-tests-stardog-0 -n ${NAMESPACE}
 		echo "Get jobs:"
 		kubectl get jobs -n ${NAMESPACE}
+		echo "helm -ls a:"
+		helm -ls a
 		exit ${rc}
 	fi
 
