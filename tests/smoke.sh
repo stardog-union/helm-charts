@@ -57,7 +57,7 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	helm install ${HELM_RELEASE_NAME} charts/stardog \
 	             --namespace ${NAMESPACE} \
 	             --wait \
-	             --timeout 10m0s \
+	             --timeout 15m0s \
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
 	             --set "zookeeper.replicaCount=${NUM_ZKS}"
@@ -75,6 +75,8 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0 --previous
 		echo "Describe pod:"
 		kubectl describe pod stardog-helm-tests-stardog-0 -n ${NAMESPACE}
+		echo "Get jobs:"
+		kubectl get jobs -n ${NAMESPACE}
 		exit ${rc}
 	fi
 
