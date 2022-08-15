@@ -21,7 +21,7 @@ function dependency_checks() {
 function minikube_start_tunnel() {
 	pushd ~
 	echo "Starting minikube tunnel"
-	echo "sudo minikube tunnel" > ~/start-minikube-tunnel.sh
+	echo "sudo -E minikube tunnel" > ~/start-minikube-tunnel.sh
 	chmod u+x ~/start-minikube-tunnel.sh
 	nohup ~/start-minikube-tunnel.sh > ~/minikube_tunnel.log 2> ~/minikube_tunnel.err < /dev/null &
 	echo "Minikube tunnel started in the background"
