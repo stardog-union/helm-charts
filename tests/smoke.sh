@@ -177,6 +177,10 @@ function create_and_drop_db() {
 	rc=$?
 	if [ ${rc} -ne 0 ]; then
 		echo "Failed to create Stardog db on ${STARDOG_IP}, exiting"
+		echo "Tunnel logs:"
+		cat ~/minikube_tunnel.log
+		echo "Tunnel error logs:"
+		cat ~/minikube_tunnel.err
 		exit ${rc}
 	fi
 	echo "Successfully created database."
