@@ -7,9 +7,6 @@ resources:
 persistence:
   size: 1Gi
 
-service:
-  type: LoadBalancer
-
 zookeeper:
   antiAffinity: preferredDuringSchedulingIgnoredDuringExecution
   resources:
