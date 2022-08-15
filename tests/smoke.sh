@@ -168,7 +168,7 @@ function check_expected_num_zk_pods() {
 }
 
 function set_stardog_ip() {
-	export STARDOG_IP=localhost
+	export STARDOG_IP=$(kubectl -n ${NAMESPACE} get svc | grep "${HELM_RELEASE_NAME}-stardog" | awk '{print $4}')
 }
 
 function create_and_drop_db() {
