@@ -21,7 +21,7 @@ function dependency_checks() {
 function minikube_start_tunnel() {
 	pushd ~
 	echo "Starting minikube tunnel"
-	echo "sudo minikube tunnel" > ~/start-minikube-tunnel.sh
+	echo "sudo -E minikube tunnel" > ~/start-minikube-tunnel.sh
 	chmod u+x ~/start-minikube-tunnel.sh
 	nohup ~/start-minikube-tunnel.sh > ~/minikube_tunnel.log 2> ~/minikube_tunnel.err < /dev/null &
 	echo "Minikube tunnel started in the background"
@@ -60,7 +60,8 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	             --timeout 15m0s \
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
-	             --set "zookeeper.replicaCount=${NUM_ZKS}"
+	             --set "zookeeper.replicaCount=${NUM_ZKS}" \
+				 --debug
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
@@ -69,6 +70,16 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		kubectl -n ${NAMESPACE} get pods
 		echo "Listing services"
 		kubectl -n ${NAMESPACE} get svc
+		echo "Logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0
+		echo "Previous logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0 --previous
+		echo "Describe pod:"
+		kubectl describe pod stardog-helm-tests-stardog-0 -n ${NAMESPACE}
+		echo "Get jobs:"
+		kubectl get jobs -n ${NAMESPACE}
+		echo "helm list --all:"
+		helm list --all -n ${NAMESPACE}
 		exit ${rc}
 	fi
 
@@ -166,6 +177,10 @@ function create_and_drop_db() {
 	rc=$?
 	if [ ${rc} -ne 0 ]; then
 		echo "Failed to create Stardog db on ${STARDOG_IP}, exiting"
+		echo "Tunnel logs:"
+		cat ~/minikube_tunnel.log
+		echo "Tunnel error logs:"
+		cat ~/minikube_tunnel.err
 		exit ${rc}
 	fi
 	echo "Successfully created database."

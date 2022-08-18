@@ -2,12 +2,12 @@ version: 2
 jobs:
    build:
      machine:
-       image: ubuntu-1604:202004-01
+       image: ubuntu-2004:202201-02
 
      environment:
-       K8S_VERSION: v1.18.2
+       K8S_VERSION: 1.21.14
        KUBECONFIG: /home/circleci/.kube/config
-       MINIKUBE_VERSION: v1.9.2
+       MINIKUBE_VERSION: v1.26.1
        MINIKUBE_WANTUPDATENOTIFICATION: false
        MINIKUBE_WANTREPORTERRORPROMPT: false
        MINIKUBE_HOME: /home/circleci
@@ -18,7 +18,7 @@ jobs:
        - run:
            name: Setup Helm
            command: |
-             curl -Lo helm.tar.gz https://get.helm.sh/helm-v3.0.0-linux-amd64.tar.gz
+             curl -Lo helm.tar.gz https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
              tar zxf helm.tar.gz
              chmod +x linux-amd64/helm
              sudo mv linux-amd64/helm /usr/local/bin/
@@ -34,7 +34,7 @@ jobs:
        - run:
            name: Setup kubectl
            command: |
-             curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
+             curl -Lo kubectl https://dl.k8s.io/v${K8S_VERSION}/bin/linux/amd64/kubectl
              chmod +x kubectl
              sudo mv kubectl /usr/local/bin/
              mkdir -p ${HOME}/.kube
@@ -55,6 +55,6 @@ jobs:
              echo ${STARDOG_LICENSE} | base64 --decode  > ${HOME}/stardog-license-key.bin
        - run:
            name: Helm smoke tests
-           no_output_timeout: 15m
+           no_output_timeout: 16m
            command: |
              ./tests/smoke.sh
