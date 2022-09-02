@@ -56,7 +56,7 @@ admin:
   password: admin
 
 image:
-  registry: https://registry.hub.docker.com/v1/repositories
+  registry: https://registry.hub.docker.com/v2/repositories
   repository: stardog/stardog
 # Alternative config to pull from Stardog private repository
   # registry: stardog-eps-docker.jfrog.io
@@ -127,7 +127,7 @@ additionalStardogProperties: |
 # stardog initialization.
 busybox:
   image:
-    registry: https://registry.hub.docker.com/v1/repositories
+    registry: https://registry.hub.docker.com/v2/repositories
     repository: busybox
     tag: stable
     pullPolicy: IfNotPresent
