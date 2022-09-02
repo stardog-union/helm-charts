@@ -1,7 +1,7 @@
 apiVersion: v2
 name: stardog
 description: Helm chart to deploy Stardog Cluster and associated services
-version: 2.0.5
+version: 2.0.6
 appVersion: latest
 home: https://github.com/stardog-union/helm-charts
 icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
