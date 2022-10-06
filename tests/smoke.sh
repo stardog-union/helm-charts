@@ -8,6 +8,7 @@ NUM_STARDOGS="3"
 NUM_ZKS="3"
 
 STARDOG_ADMIN=
+STARDOG_CLI=
 STARDOG_IP=
 
 
@@ -34,6 +35,7 @@ function install_stardog() {
 	curl -Lo stardog-latest.zip https://downloads.stardog.com/stardog/stardog-latest.zip
 	unzip stardog-latest.zip
 	export STARDOG_ADMIN="$(ls ${HOME}/stardog-binaries/stardog-*/bin/stardog-admin)"
+	export STARDOG_CLI="$(ls ${HOME}/stardog-binaries/stardog-*/bin/stardog)"
 	popd
 }
 
@@ -171,9 +173,24 @@ function set_stardog_ip() {
 	export STARDOG_IP=$(kubectl -n ${NAMESPACE} get svc | grep "${HELM_RELEASE_NAME}-stardog" | awk '{print $4}')
 }
 
-function create_and_drop_db() {
+function download_db_data() {
+	echo "Downloading sample data"
+	mkdir -p ~/sample-data/
+	pushd ~/sample-data/
+	curl -fLo data.ttl https://raw.githubusercontent.com/stardog-union/stardog-tutorials/master/music/beatles.ttl
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		echo "Failed to download the sample data for loading. Ensure there is a file at the URL"
+		exit ${rc}
+	fi
+	chmod +rx data.ttl
+	popd
+	echo "Sample data downloaded"
+}
+
+function create_db() {
 	echo "Creating database on Stardog server ${STARDOG_IP}"
-	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db create -n testdb
+	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db create -n testdb --copy-server-side -- ~/sample-data/data.ttl
 	rc=$?
 	if [ ${rc} -ne 0 ]; then
 		echo "Failed to create Stardog db on ${STARDOG_IP}, exiting"
@@ -184,8 +201,23 @@ function create_and_drop_db() {
 		exit ${rc}
 	fi
 	echo "Successfully created database."
+}
 
+function query_db() {
+	echo "Executing SELECT * { ?s ?p ?o } on database testdb"
+	${STARDOG_CLI} query execute http://${STARDOG_IP}:5820/testdb -f csv "SELECT * { ?s ?p ?o } ORDER BY ?s ?p ?o" > query_result
+	pwd
+	ls
+	diff query_result /home/circleci/project/tests/valid_query_output.csv
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		echo "Query results did not match expected output, exiting"
+		exit ${rc}
+	fi
+	echo "Successfully executed query"
+}
 
+function drop_db() {
 	echo "Dropping database on Stardog server ${STARDOG_IP}"
 	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db drop testdb
 	rc=$?
@@ -222,7 +254,10 @@ check_helm_release_exists
 check_expected_num_stardog_pods ${NUM_STARDOGS}
 check_expected_num_zk_pods ${NUM_ZKS}
 set_stardog_ip
-create_and_drop_db
+download_db_data
+create_db
+query_db
+drop_db
 
 echo "Cleaning up Helm deployment"
 helm_delete_stardog_release
