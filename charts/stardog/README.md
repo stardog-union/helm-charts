@@ -63,7 +63,7 @@ Memory Parameters
 Memory settings are part of both javaArgs and resources within
 values.yaml.  The settings must be coordinated.
 
-Stardog will aggressive use all memory allocated to it via the
+Stardog will aggressively use all memory allocated to it via the
 javaArgs settings of -Xmx and -XX:MaxDirectMemorySize.  The total
 memory used by Stardog is the sum of -Xmx and -XX:MaxDirectMemorySize.
 
