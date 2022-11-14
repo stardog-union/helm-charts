@@ -57,6 +57,28 @@ Configuration Parameters
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.
 
+Memory Parameters
+-----------------
+
+Memory settings are part of both javaArgs and resources within
+values.yaml.  The settings must be coordinated.
+
+Stardog will aggressive use all memory allocated to it via the
+javaArgs settings of -Xmx and -XX:MaxDirectMemorySize.  The total
+memory used by Stardog is the sum of -Xmx and -XX:MaxDirectMemorySize.
+
+The resources settings of requests:memory and optional limits:memory
+must account for the javaArgs settings.  requests:memory should be at
+least 1g larger than -Xms and -XX:MaxDirectMemorySize total. 2g larger is
+preferred.  If you chose to establish resourse:limits, limits:memory
+must be at least 1g larger than -Xmx and -XX:MaxDirectMemorySize total.  A
+too small limits:memory setting will likely result in a system crash.
+
+Network based disk storage is not recommended.  If used, the
+limits:memory should be at least 4g larger than -Xmx and
+-XX:MaxDirectMemorySize total.  Network storage often caches large
+writes related to data loads and db optimizations.
+
 Upgrades
 --------
 

@@ -24,6 +24,8 @@ cluster:
 terminationGracePeriodSeconds: 300
 
 # Java args for Stardog server
+#  Shown are memory sizing parameters.  Total potential memory is sum of
+#  -Xmx and -XX:MaxDirectMemorySize.  In this sample, the total memory is 3g
 javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
 
 # Additional arguments passed to Stardog at server start
@@ -81,6 +83,8 @@ antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
 
 # Stardog should have at least 2 CPUs. The CPU request value is used to set
 # -XX:ActiveProcessorCount=N for the JVM.
+# If limits:memory is activated, it must be at least 1g larger than the
+#   total of javaArg's -Xmx and -XX:MaxDirectMemorySize.  2g larger is recommended.
 resources:
   requests:
     cpu: 2
