@@ -77,8 +77,10 @@ too small limits:memory setting will likely result in a system crash.
 Network based disk storage
 --------------------------
 
-Network based disk storage is not recommended.  This include NFS, SMB, and
-EFS based storage systems.
+Network based disk storage is not recommended.  This include NFS, SMB,
+and EFS based storage systems.  Stardog instead recommends setting the
+storageClass to gp2 on AWS and leaving the default values of standard
+for Azure and GCP.
 
 If network based disk is used, the following should be part of the
 additionalStardogProperties setting:
