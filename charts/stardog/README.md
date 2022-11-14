@@ -53,7 +53,7 @@ Configuration Parameters
 | `busybox.image.tag`                          | The Docker image tag for busybox image (used as a part of Stardog initialization) |
 | `busybox.image.username`                     | The Docker registry username for busybox image registry (used as a part of Stardog initialization) |
 | `busybox.image.password`                     | The Docker registry password for the busybox image registry (used as a part of Stardog initialization)  |
-| `additionalStardogProperties`                | Allow adding additional settings to stardog.properties file |
+| `additionalStardogProperties`                | Allows adding additional settings to stardog.properties file |
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.
 
@@ -74,10 +74,23 @@ preferred.  If you chose to establish resourse:limits, limits:memory
 must be at least 1g larger than -Xmx and -XX:MaxDirectMemorySize total.  A
 too small limits:memory setting will likely result in a system crash.
 
-Network based disk storage is not recommended.  If used, the
-limits:memory should be at least 4g larger than -Xmx and
--XX:MaxDirectMemorySize total.  Network storage often caches large
-writes related to data loads and db optimizations.
+Network based disk storage
+--------------------------
+
+Network based disk storage is not recommended.  This include NFS, SMB, and
+EFS based storage systems.
+
+If network based disk is used, the following should be part of the
+additionalStardogProperties setting:
+
+storage.envoptions.use_mmap_writes = false
+
+Stardog uses a technique call memory mapping for high speed writes of
+new data and data optimizations.  Memory mapping is not appropriate
+for network files systems.  Memory mapping is simulated at the server
+causing increased operating system memory usage, slower write
+throughput, and increased chance of error / data corruption.  The
+above setting disables the use of memory mapping.
 
 Upgrades
 --------
