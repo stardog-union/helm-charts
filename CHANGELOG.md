@@ -1,3 +1,7 @@
+# 2.0.6 (2022-09-02)
+
+* Change Docker URLs to use v2 of the API (#86)
+
 # 2.0.5 (2022-06-07)
 
 * Patch the zookeeper dependency in stardog chart a result of change in the bitnami retention policy (#71)

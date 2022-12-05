@@ -8,6 +8,7 @@ NUM_STARDOGS="3"
 NUM_ZKS="3"
 
 STARDOG_ADMIN=
+STARDOG_CLI=
 STARDOG_IP=
 
 
@@ -21,7 +22,7 @@ function dependency_checks() {
 function minikube_start_tunnel() {
 	pushd ~
 	echo "Starting minikube tunnel"
-	echo "sudo minikube tunnel" > ~/start-minikube-tunnel.sh
+	echo "sudo -E minikube tunnel" > ~/start-minikube-tunnel.sh
 	chmod u+x ~/start-minikube-tunnel.sh
 	nohup ~/start-minikube-tunnel.sh > ~/minikube_tunnel.log 2> ~/minikube_tunnel.err < /dev/null &
 	echo "Minikube tunnel started in the background"
@@ -34,6 +35,7 @@ function install_stardog() {
 	curl -Lo stardog-latest.zip https://downloads.stardog.com/stardog/stardog-latest.zip
 	unzip stardog-latest.zip
 	export STARDOG_ADMIN="$(ls ${HOME}/stardog-binaries/stardog-*/bin/stardog-admin)"
+	export STARDOG_CLI="$(ls ${HOME}/stardog-binaries/stardog-*/bin/stardog)"
 	popd
 }
 
@@ -60,7 +62,8 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	             --timeout 15m0s \
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
-	             --set "zookeeper.replicaCount=${NUM_ZKS}"
+	             --set "zookeeper.replicaCount=${NUM_ZKS}" \
+				 --debug
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
@@ -69,6 +72,16 @@ function helm_install_stardog_cluster_with_zookeeper() {
 		kubectl -n ${NAMESPACE} get pods
 		echo "Listing services"
 		kubectl -n ${NAMESPACE} get svc
+		echo "Logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0
+		echo "Previous logs:"
+		kubectl logs -n ${NAMESPACE} stardog-helm-tests-stardog-0 --previous
+		echo "Describe pod:"
+		kubectl describe pod stardog-helm-tests-stardog-0 -n ${NAMESPACE}
+		echo "Get jobs:"
+		kubectl get jobs -n ${NAMESPACE}
+		echo "helm list --all:"
+		helm list --all -n ${NAMESPACE}
 		exit ${rc}
 	fi
 
@@ -160,17 +173,51 @@ function set_stardog_ip() {
 	export STARDOG_IP=$(kubectl -n ${NAMESPACE} get svc | grep "${HELM_RELEASE_NAME}-stardog" | awk '{print $4}')
 }
 
-function create_and_drop_db() {
+function download_db_data() {
+	echo "Downloading sample data"
+	mkdir -p ~/sample-data/
+	pushd ~/sample-data/
+	curl -fLo data.ttl https://raw.githubusercontent.com/stardog-union/stardog-tutorials/master/music/beatles.ttl
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		echo "Failed to download the sample data for loading. Ensure there is a file at the URL"
+		exit ${rc}
+	fi
+	chmod +rx data.ttl
+	popd
+	echo "Sample data downloaded"
+}
+
+function create_db() {
 	echo "Creating database on Stardog server ${STARDOG_IP}"
-	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db create -n testdb
+	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db create -n testdb --copy-server-side -- ~/sample-data/data.ttl
 	rc=$?
 	if [ ${rc} -ne 0 ]; then
 		echo "Failed to create Stardog db on ${STARDOG_IP}, exiting"
+		echo "Tunnel logs:"
+		cat ~/minikube_tunnel.log
+		echo "Tunnel error logs:"
+		cat ~/minikube_tunnel.err
 		exit ${rc}
 	fi
 	echo "Successfully created database."
+}
 
+function query_db() {
+	echo "Executing SELECT * { ?s ?p ?o } on database testdb"
+	${STARDOG_CLI} query execute http://${STARDOG_IP}:5820/testdb -f csv "SELECT * { ?s ?p ?o } ORDER BY ?s ?p ?o" > query_result
+	pwd
+	ls
+	diff query_result /home/circleci/project/tests/valid_query_output.csv
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		echo "Query results did not match expected output, exiting"
+		exit ${rc}
+	fi
+	echo "Successfully executed query"
+}
 
+function drop_db() {
 	echo "Dropping database on Stardog server ${STARDOG_IP}"
 	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 db drop testdb
 	rc=$?
@@ -207,7 +254,10 @@ check_helm_release_exists
 check_expected_num_stardog_pods ${NUM_STARDOGS}
 check_expected_num_zk_pods ${NUM_ZKS}
 set_stardog_ip
-create_and_drop_db
+download_db_data
+create_db
+query_db
+drop_db
 
 echo "Cleaning up Helm deployment"
 helm_delete_stardog_release
