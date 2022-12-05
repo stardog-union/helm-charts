@@ -68,8 +68,8 @@ image:
 
 # The storage class and size to use for Stardog home volumes for the pods
 persistence:
-  storageClass: standard
-  size: 5Gi
+  storageClass: longhorn
+  size: 50Gi
 
 nodeSelector: {}
 tolerations: []
@@ -93,10 +93,10 @@ resources:
 # these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
 # if enabled: false, then the whole block is skipped
 securityContext:
-  enabled: false
-  runAsUser: null
-  runAsGroup: null
-  fsGroup: null
+  enabled: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
 
 metrics:
   enabled: false
@@ -149,7 +149,7 @@ zookeeper:
     maxUnavailable: 1
   persistence:
     enabled: true
-    storageClass: standard
+    storageClass: longhorn
     size: 5Gi
   resources:
     requests:
