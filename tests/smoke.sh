@@ -249,11 +249,11 @@ function validate_helm_chart() {
 }
 
 echo "Starting the Helm smoke tests"
+validate_helm_chart
 dependency_checks
 minikube_start_tunnel
 install_stardog
 helm_setup_cluster
-validate_helm_chart
 
 echo "Test: Stardog 3 node cluster with ZooKeeper"
 helm_install_stardog_cluster_with_zookeeper
