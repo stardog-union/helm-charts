@@ -242,7 +242,14 @@ function helm_delete_stardog_release() {
 	echo "Stardog release deleted."
 }
 
+function validate_helm_chart() {
+	echo "Validating the helm chart"
+	helm lint charts/stardog >/dev/null 2>&1 || { echo >&2 "The helm chart is not valid, exiting."; exit 1; }
+	echo "Helm chart valid."
+}
+
 echo "Starting the Helm smoke tests"
+validate_helm_chart
 dependency_checks
 minikube_start_tunnel
 install_stardog
