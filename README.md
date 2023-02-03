@@ -50,3 +50,39 @@ Deleting
 ```
 $ helm delete <helm-release-name> --namespace <your-namespace>
 ```
+
+Running the tests locally
+-------------------------
+
+This assume you have Docker installed and running this on MacOs. For other systems, install their corresponding binaries.
+
+## Install minikube
+```
+# Get the one from here https://github.com/kubernetes/minikube/releases For macos, this is the latest version
+curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/<minikube-version>/minikube-darwin-arm64
+chmod +x minikube
+sudo mv minikube /usr/local/bin/
+```
+
+## Start minikube
+Your k8s version should be the same as your kubectl version. This will update you ~/.kube/config file and set minikube to the current context.
+```
+minikube start --driver=docker --kubernetes-version=v.1.29.0
+```
+
+## Set up the Stardog license
+Make sure you have a proper stardog license called `stardog-license-key.bin` located in the root directory of this project.
+```
+kubectl create secret generic stardog-license --from-file stardog-license-key.bin=stardog-license-key.bin
+```
+
+## Install Stardog as a helm release
+```
+helm install stardog charts/stardog/ --wait --timeout 15m -f tests/minikube.yaml \
+ --set "cluster.enabled=false" \
+--set "replicaCount=1" \
+--set "zookeeper.enabled=false"
+```
+
+## Run the tests
+ ./tests/smoke.sh

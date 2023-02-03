@@ -228,6 +228,17 @@ function drop_db() {
 	echo "Successfully dropped database."
 }
 
+function image_pull_secret_should_not_be_set_by_default() {
+	statefulset_name=$(kubectl -n ${NAMESPACE} get sts --no-headers | grep stardog | awk '{print $1}')
+	command_output=$(kubectl -n ${NAMESPACE} get sts -o yaml ${statefulset_name}) &&  echo ${command_output} | grep imagePullSecret
+	rc=$?
+	if [ ${rc} -ne 1 ]; then
+		echo "imagePullSecret option was set, but should not be set on default settings."
+		exit ${rc}
+	fi
+	echo "Success: imagePullSecret should not be set by default"
+}
+
 function helm_delete_stardog_release() {
 	echo "Deleting Stardog release"
 
@@ -265,6 +276,9 @@ download_db_data
 create_db
 query_db
 drop_db
+
+echo "Testing chart configurations"
+image_pull_secret_should_not_be_set_by_default
 
 echo "Cleaning up Helm deployment"
 helm_delete_stardog_release
