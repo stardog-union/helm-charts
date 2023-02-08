@@ -164,14 +164,12 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- if or (and .Values.image.username .Values.image.password) (and .Values.busybox.image.username .Values.busybox.image.password) }}
       imagePullSecrets:
-{{- if and .Values.image.username .Values.image.password }}
+  {{- if and .Values.image.username .Values.image.password }}
       - name: {{ .Release.Name }}-image-pull-secret
-{{- end}}
-{{- if and .Values.busybox.image.username .Values.busybox.image.password }}
+  {{- end}}
+  {{- if and .Values.busybox.image.username .Values.busybox.image.password }}
       - name: {{ .Release.Name }}-image-busybox-pull-secret
-{{- end}}
-{{- else }}
-      imagePullSecrets: null
+  {{- end}}
 {{- end}}
       volumes:
       - name: stardog-license
