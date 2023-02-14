@@ -1,3 +1,9 @@
+# 2.0.7 (2023-02-14)
+
+* Make imagePullSecrets optional (#77)
+* Ignores image pull secret if not passed (#89) 
+* Add data load and query to smoke tests (#84) 
+
 # 2.0.6 (2022-09-02)
 
 * Change Docker URLs to use v2 of the API (#86)
