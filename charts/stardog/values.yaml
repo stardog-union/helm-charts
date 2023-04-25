@@ -152,7 +152,7 @@ zookeeper:
       cpu: 1
   image:
     repository: bitnami/zookeeper
-    tag: 3.5.7
+    tag: 3.7.1-debian-11-r58
     pullPolicy: IfNotPresent
   logLevel: INFO
 #  livenessProbe:
