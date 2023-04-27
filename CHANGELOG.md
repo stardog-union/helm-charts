@@ -1,3 +1,8 @@
+# 2.0.8 (2023-04-27)
+
+* Change Occurences of sh to bash (#92)
+* Bump Bitnami ZooKeeper Chart, ZooKeeper upgraded to 3.7.1 from 3.5.7, and Update Docs for Upgrading ZooKeeper (#93)
+
 # 2.0.7 (2023-02-14)
 
 * Make imagePullSecrets optional (#77)
