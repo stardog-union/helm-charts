@@ -2,7 +2,7 @@ Stardog Helm Charts
 ===================
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![<ORG_NAME>](https://circleci.com/gh/stardog-union/helm-charts.svg?style=shield&circle-token=213cf9bca0acf5d3945dfd5d746b48f1c2d436e0)](https://app.circleci.com/pipelines/gh/stardog-union/helm-charts)
+[![stardog-union](https://circleci.com/gh/stardog-union/helm-charts.svg?style=shield)](https://app.circleci.com/pipelines/gh/stardog-union/helm-charts)
 
 These charts install the Stardog Knowledge Graph platform on Kubernetes.
 

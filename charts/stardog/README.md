@@ -89,6 +89,35 @@ a separate location.
 - Shutdown all Stardog and ZooKeeper pods (e.g. using `helm delete`).
 - Install the new 2.x charts with the same version of Stardog you were running previously.
 
+### Upgrading Zookeeper
+
+Certain new versions of these charts will specify a newer version of ZooKeeper
+by default. This is because with new Stardog versions, support for new ZooKeeper
+versions is added and support for older ZooKeeper versions is removed. When 
+upgrading the ZooKeeper version, the steps are similar to the section above.
+
+- Stop all traffic and updates to your cluster or wait for them to end. You can 
+check for these using `stardog tx list`, `stardog-admin db status <db name>`,
+and `stardog-admin ps list`.
+- Backup Stardog home and copy the backup out of the k8s environment. The
+[Stardog documentation](https://www.stardog.com/docs/#_backing_up_and_restoring) includes
+an overview of the various options for backing up Stardog. Only S3 backups will copy
+data outside of the pods. If you use another backup method you will need to manually
+copy the data off the volume or snapshot the volumes to ensure the data is stored in
+a separate location.
+- Shutdown all Stardog and ZooKeeper pods without deleting the PVCs. This can be done by:
+    - Setting the `replicaCount` of the Stardog and ZooKeeper pods both to 0 then
+    running `helm upgrade` **OR**
+    - Running `helm delete`
+- Set the ZooKeeper image tag to a newer version in your `values.yaml` file
+- Bring the Stardog and Zookeeper pods back online. Using the previous examples, this would mean:
+    - Setting both `replicaCount` values back to their previous non-zero value 
+    then running `helm upgrade` **OR**
+    - Running `helm install`
+
+Failure to fully stop Stardog before upgrading ZooKeeper could result in putting
+the Stardog cluster in a non-functional state.
+
 Limitations
 -----------
 
