@@ -54,6 +54,7 @@ tmpDir: /tmp
 # The initial password for the Stardog admin user
 admin:
   password: admin
+  # passwordSecretRef: password-secret
 
 image:
   registry: https://registry.hub.docker.com/v2/repositories

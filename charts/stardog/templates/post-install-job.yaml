@@ -59,7 +59,11 @@ spec:
       volumes:
       - name: {{ include "stardog.fullname" . }}-password
         secret:
+{{- if .Values.admin.passwordSecretRef }}
+          secretName: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
           secretName: {{ include "stardog.fullname" . }}-password
+{{- end}}
           items:
             - key: password
               path: adminpw
