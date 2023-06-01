@@ -29,6 +29,7 @@ Configuration Parameters
 | `replicaCount`                               | The number of replicas in Stardog Cluster |
 | `podManagementPolicy`                        | Set the pod startup policy - use `OrderedReady` (default) or `Parallel` |
 | `admin.password`                             | Stardog admin password |
+| `admin.passwordSecretRef`                    | A reference to an external Stardog admin password secret |
 | `javaArgs`                                   | Java args for Stardog server |
 | `serverStartArgs`                            | Additional arguments for Stardog server start |
 | `image.registry`                             | The Docker registry containing the Stardog image |
