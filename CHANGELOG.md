@@ -1,3 +1,7 @@
+# 2.0.9 (2023-06-06)
+
+* added option to add a passwordSecretRef for the database setup (#95)
+
 # 2.0.8 (2023-04-27)
 
 * Change Occurences of sh to bash (#92)
