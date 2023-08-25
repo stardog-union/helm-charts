@@ -104,10 +104,15 @@ log4jConfig:
   # we provide a default log4j2.xml, if you want to provide your own. in your own values.yaml, set log4Config.override: true, and log4Config.content
   # content: null
 
-# Stardog liveness probe settings. Consider increasing initialDelaySeconds on clouds where
-# storage provisioning is slower. It is not generally required to modify periodSeconds and timeoutSeconds.
+# Stardog startup probe settings. This gives the database 6 hours to start,
+# e.g. if it needs to rebuild its index if necessary.
+startupProbe:
+  periodSeconds: 30
+  timeoutSeconds: 15
+  failureThreshold: 720
+
+# Stardog liveness probe settings. It is not generally required to modify periodSeconds and timeoutSeconds.
 livenessProbe:
-  initialDelaySeconds: 30
   periodSeconds: 30
   timeoutSeconds: 15
 

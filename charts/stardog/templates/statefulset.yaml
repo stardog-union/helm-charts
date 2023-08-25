@@ -139,11 +139,17 @@ spec:
           {{ .Files.Get "files/utils.sh" | indent 10 }}
           make_temp ${STARDOG_TMP_PATH}
           /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME} ${STARDOG_SERVER_START_ARGS}
+        startupProbe:
+          httpGet:
+            path: /admin/alive
+            port: server
+          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
         livenessProbe:
           httpGet:
             path: /admin/alive
             port: server
-          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
         readinessProbe:
