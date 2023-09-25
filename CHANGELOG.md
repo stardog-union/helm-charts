@@ -1,3 +1,7 @@
+# 2.0.10 (2023-09-25)
+
+* Add startupProbe (#97)
+
 # 2.0.9 (2023-06-06)
 
 * added option to add a passwordSecretRef for the database setup (#95)
