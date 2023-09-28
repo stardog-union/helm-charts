@@ -75,6 +75,11 @@ Make sure you have a proper stardog license called `stardog-license-key.bin` loc
 ```
 kubectl create secret generic stardog-license --from-file stardog-license-key.bin=stardog-license-key.bin
 ```
+## Replace the Stardog license
+If your license is about to expire, you can replace you existing license with a new one using the following command.
+```
+kubectl -n <your-namespace> create secret generic stardog-license --from-file stardog-license-key.bin=/path/to/new/stardog-license-key.bin --dry-run=client -o yaml | kubectl apply -f -
+```
 
 ## Install Stardog as a helm release
 ```
