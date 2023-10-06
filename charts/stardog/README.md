@@ -54,9 +54,46 @@ Configuration Parameters
 | `busybox.image.tag`                          | The Docker image tag for busybox image (used as a part of Stardog initialization) |
 | `busybox.image.username`                     | The Docker registry username for busybox image registry (used as a part of Stardog initialization) |
 | `busybox.image.password`                     | The Docker registry password for the busybox image registry (used as a part of Stardog initialization)  |
-| `additionalStardogProperties`                | Allow adding additional settings to stardog.properties file |
+| `additionalStardogProperties`                | Allows adding additional settings to stardog.properties file |
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.
+
+Memory Parameters
+-----------------
+
+Memory settings are part of both javaArgs and resources within
+values.yaml.  The settings must be coordinated.
+
+Stardog will aggressively use all memory allocated to it via the
+javaArgs settings of -Xmx and -XX:MaxDirectMemorySize.  The total
+memory used by Stardog is the sum of -Xmx and -XX:MaxDirectMemorySize.
+
+The resources settings of requests:memory and optional limits:memory
+must account for the javaArgs settings.  requests:memory should be at
+least 1g larger than -Xms and -XX:MaxDirectMemorySize total. 2g larger is
+preferred.  If you chose to establish resourse:limits, limits:memory
+must be at least 1g larger than -Xmx and -XX:MaxDirectMemorySize total.  A
+too small limits:memory setting will likely result in a system crash.
+
+Network based disk storage
+--------------------------
+
+Network based disk storage is not recommended.  This include NFS, SMB,
+and EFS based storage systems.  Stardog instead recommends setting the
+storageClass to gp2 on AWS and leaving the default values of standard
+for Azure and GCP.
+
+If network based disk is used, the following should be part of the
+additionalStardogProperties setting:
+
+storage.envoptions.use_mmap_writes = false
+
+Stardog uses a technique call memory mapping for high speed writes of
+new data and data optimizations.  Memory mapping is not appropriate
+for network files systems.  Memory mapping is simulated at the server
+causing increased operating system memory usage, slower write
+throughput, and increased chance of error / data corruption.  The
+above setting disables the use of memory mapping.
 
 Upgrades
 --------
