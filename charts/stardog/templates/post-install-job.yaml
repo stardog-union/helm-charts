@@ -33,17 +33,23 @@ spec:
       - name: post-install-job
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        volumeMounts:
-        - name: {{ include "stardog.fullname" . }}-password
-          mountPath: /etc/stardog-password
-          readOnly: true
         env:
         - name: PORT
           value: "{{ .Values.ports.server }}"
         - name: HOST
-          value: "{{ include "stardog.fullname" . }}.{{ include "stardog.namespace" . }}"
+          value: '{{ include "stardog.fullname" . }}.{{ include "stardog.namespace" . }}'
         - name: DELAY
           value: "{{ .Values.waitForStartSeconds }}"
+        - name: STARDOG_ADMINPW
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.admin.passwordSecretRef }}
+              name: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+              name: {{ include "stardog.fullname" . }}-password
+{{- end }}
+              key: password
+
         command:
         - /bin/bash
         - -c
@@ -56,15 +62,3 @@ spec:
       imagePullSecrets:
       - name: {{ .Release.Name }}-image-pull-secret
       {{- end}}
-      volumes:
-      - name: {{ include "stardog.fullname" . }}-password
-        secret:
-{{- if .Values.admin.passwordSecretRef }}
-          secretName: {{ .Values.admin.passwordSecretRef }}
-{{ else }}
-          secretName: {{ include "stardog.fullname" . }}-password
-{{- end}}
-          items:
-            - key: password
-              path: adminpw
-              mode: 444

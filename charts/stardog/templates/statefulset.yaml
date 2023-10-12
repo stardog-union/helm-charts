@@ -97,9 +97,6 @@ spec:
           name: sql
         {{- end }}
         volumeMounts:
-        - name: {{ include "stardog.fullname" . }}-password
-          mountPath: /etc/stardog-password
-          readOnly: true
         - name: stardog-license
           mountPath: /etc/stardog-license
           readOnly: true
@@ -129,6 +126,15 @@ spec:
           value: "{{ .Values.tmpDir }}"
         - name: STARDOG_SERVER_START_ARGS
           value: "{{ .Values.serverStartArgs }}"
+        - name: STARDOG_ADMINPW
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.admin.passwordSecretRef }}
+              name: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+              name: {{ include "stardog.fullname" . }}-password
+{{- end }}
+              key: password
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
@@ -166,7 +172,7 @@ spec:
               - /bin/bash
               - -c
               - |
-                /opt/stardog/bin/stardog-admin server stop -u admin -p $(cat /etc/stardog-password/adminpw)
+                /opt/stardog/bin/stardog-admin server stop -u admin -p ${STARDOG_ADMINPW}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- if or (and .Values.image.username .Values.image.password) .Values.image.imagePullSecret (and .Values.busybox.image.username .Values.busybox.image.password) .Values.busybox.image.imagePullSecret }}
       imagePullSecrets:
@@ -199,17 +205,6 @@ spec:
           items:
           - key: log4j2.xml
             path: log4j2.xml
-      - name: {{ include "stardog.fullname" . }}-password
-        secret:
-{{- if .Values.admin.passwordSecretRef }}
-          secretName: {{ .Values.admin.passwordSecretRef }}
-{{ else }}
-          secretName: {{ include "stardog.fullname" . }}-password
-{{- end}}
-          items:
-            - key: password
-              path: adminpw
-              mode: 444
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
   volumeClaimTemplates:
