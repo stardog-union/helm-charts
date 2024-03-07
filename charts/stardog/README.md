@@ -38,6 +38,7 @@ Configuration Parameters
 | `image.tag`                                  | The Docker image tag for Stardog |
 | `image.username`                             | The Docker registry username |
 | `image.password`                             | The Docker registry password |
+| `image.imagePullSecret`                      | The name of the secret from which to pull credentials for Stardog |
 | `persistence.storageClass`                   | The storage class to use for Stardog home volumes |
 | `persistence.size`                           | The size of volume for Stardog home |
 | `ports.server`                               | The port to expose Stardog server |
@@ -54,6 +55,7 @@ Configuration Parameters
 | `busybox.image.tag`                          | The Docker image tag for busybox image (used as a part of Stardog initialization) |
 | `busybox.image.username`                     | The Docker registry username for busybox image registry (used as a part of Stardog initialization) |
 | `busybox.image.password`                     | The Docker registry password for the busybox image registry (used as a part of Stardog initialization)  |
+| `busybox.imagePullSecret`                    | The name of the secret from which to pull credentials for the busybox image registry (used as a part of Stardog initialization) |
 | `additionalStardogProperties`                | Allow adding additional settings to stardog.properties file |
 
 The default values are specified in `values.yaml` as well as the required values for the ZooKeeper chart.

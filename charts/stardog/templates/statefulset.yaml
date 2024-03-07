@@ -168,13 +168,19 @@ spec:
               - |
                 /opt/stardog/bin/stardog-admin server stop -u admin -p $(cat /etc/stardog-password/adminpw)
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-{{- if or (and .Values.image.username .Values.image.password) (and .Values.busybox.image.username .Values.busybox.image.password) }}
+{{- if or (and .Values.image.username .Values.image.password) .Values.image.imagePullSecret (and .Values.busybox.image.username .Values.busybox.image.password) .Values.busybox.image.imagePullSecret }}
       imagePullSecrets:
   {{- if and .Values.image.username .Values.image.password }}
       - name: {{ .Release.Name }}-image-pull-secret
   {{- end}}
+  {{- if .Values.image.imagePullSecret }}
+      - name: {{ .Values.image.imagePullSecret }}
+  {{- end}}
   {{- if and .Values.busybox.image.username .Values.busybox.image.password }}
       - name: {{ .Release.Name }}-image-busybox-pull-secret
+  {{- end}}
+  {{- if .Values.busybox.image.imagePullSecret }}
+      - name: {{ .Values.busybox.image.imagePullSecret }}
   {{- end}}
 {{- end}}
       volumes:

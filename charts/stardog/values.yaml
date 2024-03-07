@@ -66,6 +66,7 @@ image:
   pullPolicy: IfNotPresent
   # username:
   # password:
+  # imagePullSecret:
 
 # The storage class and size to use for Stardog home volumes for the pods
 persistence:
@@ -139,6 +140,7 @@ busybox:
     pullPolicy: IfNotPresent
     # username:
     # password:
+    # imagePullSecret
 
 # Settings to use for the ZooKeeper chart that Stardog depends on.
 # The full set of options can be found on the bitname ZK chart:
