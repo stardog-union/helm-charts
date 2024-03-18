@@ -3,6 +3,7 @@
 set +x
 
 HELM_RELEASE_NAME="stardog-helm-tests"
+HELM_CACHE_TARGET_RELEASE_NAME="stardog-cache-target"
 NAMESPACE="stardog"
 NUM_STARDOGS="3"
 NUM_ZKS="3"
@@ -259,6 +260,84 @@ function validate_helm_chart() {
 	echo "Helm chart valid."
 }
 
+function helm_install_cache_target() {
+	echo "Installing Stardog cache target"
+
+	echo "Running helm install for ${HELM_CACHE_TARGET_RELEASE_NAME}"
+
+	pushd charts/cachetarget/
+	helm dependencies update
+	popd
+
+	helm install ${HELM_CACHE_TARGET_RELEASE_NAME} charts/cachetarget \
+	             --namespace ${NAMESPACE} \
+	             --wait \
+	             --timeout 15m0s \
+	             -f ./tests/minikube.yaml \
+	             --set "cluster.name=${HELM_RELEASE_NAME}-stardog" \
+				 --debug
+	rc=$?
+
+	if [ ${rc} -ne 0 ]; then
+		echo "Helm install for Stardog cache target failed, exiting"
+		echo "Listing pods"
+		kubectl -n ${NAMESPACE} get pods
+		echo "Listing services"
+		kubectl -n ${NAMESPACE} get svc
+		exit ${rc}
+	fi
+
+	echo "Stardog cache target installed."
+}
+
+function check_cache_target() {
+	echo "Checking cache target"
+	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 cache target list | grep ${HELM_CACHE_TARGET_RELEASE_NAME}-cache
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		echo "Failed to list cache target on ${STARDOG_IP}, exiting"
+		echo "Tunnel logs:"
+		cat ~/minikube_tunnel.log
+		echo "Tunnel error logs:"
+		cat ~/minikube_tunnel.err
+		exit ${rc}
+	fi
+	echo "Successfully found cache target."
+}
+
+function helm_delete_cache_target() {
+	echo "Deleting cache target"
+
+	# First remove cache target. This must be done manually and not automated in the pod's
+	# preStop hook because traffic will no longer be routed to the pod once termination begins.
+	# Part of removing the cache target requires Stardog connecting to the cache target to
+	# perform cleanup.
+	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 cache target remove ${HELM_CACHE_TARGET_RELEASE_NAME}-cache
+
+	echo "Checking cache target has been removed"
+	${STARDOG_ADMIN} --server http://${STARDOG_IP}:5820 cache target list | grep ${HELM_CACHE_TARGET_RELEASE_NAME}-cache
+	rc=$?
+	if [ ${rc} -eq 0 ]; then
+		echo "Found the cache target on ${STARDOG_IP} when it should be gone, exiting"
+		echo "Tunnel logs:"
+		cat ~/minikube_tunnel.log
+		echo "Tunnel error logs:"
+		cat ~/minikube_tunnel.err
+		exit 1
+	fi
+
+	echo "Deleting helm cache target install: ${HELM_CACHE_TARGET_RELEASE_NAME}"
+	helm delete ${HELM_CACHE_TARGET_RELEASE_NAME} --namespace ${NAMESPACE}
+	rc=$?
+
+	if [ ${rc} -ne 0 ]; then
+		echo "Helm failed to delete Stardog cache target, exiting"
+		exit ${rc}
+	fi
+
+	echo "Stardog cache target deleted."
+}
+
 echo "Starting the Helm smoke tests"
 validate_helm_chart
 dependency_checks
@@ -276,6 +355,9 @@ download_db_data
 create_db
 query_db
 drop_db
+helm_install_cache_target
+check_cache_target
+helm_delete_cache_target
 
 echo "Testing chart configurations"
 image_pull_secret_should_not_be_set_by_default

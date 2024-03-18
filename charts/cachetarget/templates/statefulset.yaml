@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "cachetarget.fullname" . }}
+  namespace: {{ include "cachetarget.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "cachetarget.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: cache
+spec:
+  replicas: 1
+  serviceName: {{ include "cachetarget.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ include "cachetarget.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "cachetarget.fullname" . }}
+    spec:
+      containers:
+      - name: {{ include "cachetarget.fullname" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        env:
+          - name: PORT
+            value: "{{ .Values.ports.server }}"
+          - name: STARDOG_HOME
+            value: "/var/opt/stardog/"
+          - name: STARDOG_LICENSE_PATH
+            value: "/etc/stardog-license/stardog-license-key.bin"
+          - name: STARDOG_PROPERTIES
+            value: "/etc/stardog-conf/stardog.properties"
+          - name: STARDOG_SERVER_JAVA_ARGS
+            value: "-XX:ActiveProcessorCount={{ .Values.resources.requests.cpu }}  -Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
+          - name: STARDOG_TMP_PATH
+            value: "{{ .Values.tmpDir }}"
+        ports:
+        - containerPort: {{ .Values.ports.server }}
+          name: server
+        volumeMounts:
+        - name: {{ include "cachetarget.fullname" . }}-password
+          mountPath: /etc/stardog-password
+          readOnly: true
+        - name: stardog-license
+          mountPath: /etc/stardog-license
+          readOnly: true
+        - name: {{ include "cachetarget.fullname" . }}-data
+          mountPath: /var/opt/stardog/
+        - name: {{ include "cachetarget.fullname" . }}-properties-vol
+          mountPath: /etc/stardog-conf/stardog.properties
+          subPath: stardog.properties
+        - name: {{ include "cachetarget.fullname" . }}-log4j-vol
+          mountPath: /var/opt/stardog/log4j2.xml
+          subPath: log4j2.xml
+        resources:
+          requests:
+            memory: "{{ .Values.requests.memory }}"
+            cpu: "{{ .Values.requests.cpu }}"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -ex
+          {{ .Files.Get "files/utils.sh" | indent 10 }}
+          make_temp ${STARDOG_TMP_PATH}
+          /opt/stardog/bin/stardog-admin server start --foreground --port ${PORT} --home ${STARDOG_HOME}
+        startupProbe:
+          httpGet:
+            path: /admin/alive
+            port: server
+          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+        livenessProbe:
+          httpGet:
+            path: /admin/alive
+            port: server
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: /admin/healthcheck
+            port: server
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - |
+                set -ex
+                {{ .Files.Get "files/utils.sh" | indent 16 }}
+                echo "Destroying the cache target"
+                cleanup_cache_target
+{{- if (and .Values.image.username .Values.image.password) }}
+      imagePullSecrets:
+  {{- if and .Values.image.username .Values.image.password }}
+      - name: {{ .Release.Name }}-image-pull-secret
+  {{- end}}
+{{- end}}
+      volumes:
+      - name: stardog-license
+        secret:
+          secretName: stardog-license
+      - name: {{ include "cachetarget.fullname" . }}-properties-vol
+        configMap:
+          name: {{ include "cachetarget.fullname" . }}-properties
+          items:
+          - key: stardog.properties
+            path: stardog.properties
+      - name: {{ include "cachetarget.fullname" . }}-log4j-vol
+        configMap:
+          name: {{ include "cachetarget.fullname" . }}-log4j
+          items:
+          - key: log4j2.xml
+            path: log4j2.xml
+      - name: {{ include "cachetarget.fullname" . }}-password
+        secret:
+{{- if .Values.admin.passwordSecretRef }}
+          secretName: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+          secretName: {{ include "cachetarget.fullname" . }}-password
+{{- end}}
+          items:
+            - key: password
+              path: adminpw
+              mode: 444
+
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ include "cachetarget.fullname" . }}-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.requests.disk }}

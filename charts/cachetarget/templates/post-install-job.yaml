@@ -1,0 +1,82 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "cachetarget.fullname" . }}
+  namespace: {{ include "cachetarget.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "cachetarget.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ include "cachetarget.fullname" . }}
+      labels:
+        helm.sh/chart: {{ include "cachetarget.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+{{ if .Values.securityContext.enabled }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup  }}
+{{ end }}
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        volumeMounts:
+        - name: {{ include "cachetarget.fullname" . }}-password
+          mountPath: /etc/stardog-password
+          readOnly: true
+        - name: {{ .Values.cluster.name }}-password
+          mountPath: /etc/cluster-password
+          readOnly: true
+        env:
+        - name: PORT
+          value: "{{ .Values.ports.server }}"
+        - name: HOST
+          value: "{{ include "cachetarget.fullname" . }}.{{ include "cachetarget.namespace" . }}"
+        - name: DELAY
+          value: "{{ .Values.waitForStartSeconds }}"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -ex
+          {{ .Files.Get "files/utils.sh" | indent 10 }}
+          wait_for_start ${HOST} ${PORT} ${DELAY}
+          change_pw ${HOST} ${PORT}
+          echo "Registering the target"
+          setup_cache_target {{ include "cachetarget.fullname" . }} {{ .Values.ports.server }} {{ .Values.cluster.name }} {{ .Values.cluster.port }} {{ include "cachetarget.namespace" . }}
+      {{- if and .Values.image.username .Values.image.password }}
+      imagePullSecrets:
+      - name: {{ .Release.Name }}-image-pull-secret
+      {{- end}}
+      volumes:
+      - name: {{ include "cachetarget.fullname" . }}-password
+        secret:
+{{- if .Values.admin.passwordSecretRef }}
+          secretName: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+          secretName: {{ include "cachetarget.fullname" . }}-password
+{{- end}}
+          items:
+            - key: password
+              path: adminpw
+              mode: 444
+      - name: {{ .Values.cluster.name }}-password
+        secret:
+          secretName: {{ .Values.cluster.name }}-password
+          items:
+            - key: password
+              path: adminpw
+              mode: 444

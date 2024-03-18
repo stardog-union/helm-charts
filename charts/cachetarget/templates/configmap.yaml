@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cachetarget.fullname" . }}-log4j
+  namespace: {{ include "cachetarget.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "cachetarget.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+data:{{ if .Values.log4jConfig.override }}
+  log4j2.xml: {{ toJson .Values.log4jConfig.content }}{{ else }}
+  {{- (.Files.Glob "files/log4j2.xml").AsConfig | nindent 2 }}
+{{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cachetarget.fullname" . }}-properties
+  namespace: {{ include "cachetarget.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "cachetarget.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+
+data:
+  stardog.properties: |
+    query.timeout = 10m
+    cache.target.enabled = true
+    cache.target.autoregister = false
+  {{- .Values.additionalStardogProperties | nindent 6 }}
