@@ -64,8 +64,8 @@ function helm_install_stardog_cluster_with_zookeeper() {
 	             -f ./tests/minikube.yaml \
 	             --set "replicaCount=${NUM_STARDOGS}" \
 	             --set "zookeeper.replicaCount=${NUM_ZKS}" \
-				 --set "additionalStardogProperties=catalog.auto.create.db=false" \
-				 --debug
+	             --set "additionalStardogProperties=catalog.auto.create.db=false" \
+	             --debug
 	rc=$?
 
 	if [ ${rc} -ne 0 ]; then
