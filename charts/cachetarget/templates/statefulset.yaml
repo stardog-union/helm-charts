@@ -57,9 +57,7 @@ spec:
           mountPath: /var/opt/stardog/log4j2.xml
           subPath: log4j2.xml
         resources:
-          requests:
-            memory: "{{ .Values.requests.memory }}"
-            cpu: "{{ .Values.requests.cpu }}"
+{{ toYaml .Values.resources | indent 10 }}
         command:
         - /bin/bash
         - -c
@@ -141,4 +139,4 @@ spec:
       storageClassName: {{ .Values.persistence.storageClass }}
       resources:
         requests:
-          storage: {{ .Values.requests.disk }}
+          storage: {{ .Values.persistence.size }}

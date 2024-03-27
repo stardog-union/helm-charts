@@ -31,4 +31,4 @@ data:
     query.timeout = 10m
     cache.target.enabled = true
     cache.target.autoregister = false
-  {{- .Values.additionalStardogProperties | nindent 6 }}
+  {{- .Values.additionalStardogProperties | nindent 4 }}
