@@ -1,0 +1,98 @@
+---
+# The namespace for Stardog cache target resources that override the release namespace
+# namespaceOverride: stardog
+
+image:
+  registry: https://registry.hub.docker.com/v2/repositories
+  repository: stardog/stardog
+# Alternative config to pull from Stardog private repository
+  # registry: stardog-eps-docker.jfrog.io
+  # repository: stardog-eps-docker.jfrog.io/stardog
+  tag: latest
+  pullPolicy: IfNotPresent
+  # username:
+  # password:
+
+# The storage class and size to use for Stardog home volumes for the pods
+persistence:
+  storageClass: standard
+  size: 5Gi
+
+# The number of seconds the post install job will wait for Stardog
+# to start. Consider increasing it for k8s providers that have
+# slower resource provisioning.
+waitForStartSeconds: 300
+
+# Stardog should have at least 2 CPUs. The CPU request value is used to set
+# -XX:ActiveProcessorCount=N for the JVM.
+resources:
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
+# if enabled: false, then the whole block is skipped
+securityContext:
+  enabled: false
+  runAsUser: null
+  runAsGroup: null
+  fsGroup: null
+
+# The service type to use for cache target ports
+service:
+  type: LoadBalancer
+  annotations: {}
+  # loadBalancerIP: 0.0.0.0
+
+ports:
+  server: 5821
+
+# Java args for Stardog server
+javaArgs: "-Xmx2g -Xms2g -XX:MaxDirectMemorySize=1g"
+
+# The location Stardog will use for temporary space (i.e. java.io.tmpdir).
+# If you choose to place this in STARDOG_HOME (/var/opt/stardog) for performance
+# reasons, ensure that it does not conflict with any possible database names.
+# For example, a good choice might be /var/opt/stardog/tmp-4646E7B662A7.
+# If the directory does not exist it will be created.
+tmpDir: /tmp
+
+# The initial password for the Stardog admin user
+admin:
+  password: admin
+  # passwordSecretRef: password-secret
+
+log4jConfig:
+  override: false
+  # we provide a default log4j2.xml, if you want to provide your own. in your own values.yaml, set log4Config.override: true, and log4Config.content
+  # content: null
+
+# Stardog startup probe settings. This gives the database 6 hours to start,
+# e.g. if it needs to rebuild its index if necessary.
+startupProbe:
+  periodSeconds: 30
+  timeoutSeconds: 15
+  failureThreshold: 720
+
+# Stardog liveness probe settings. It is not generally required to modify periodSeconds and timeoutSeconds.
+livenessProbe:
+  periodSeconds: 30
+  timeoutSeconds: 15
+
+# Stardog readiness probe settings. Consider increasing initialDelaySeconds when using nodes with
+# K8S nodes with limited CPUs. It is not generally required to modify periodSeconds and timeoutSeconds.
+readinessProbe:
+  initialDelaySeconds: 15
+  periodSeconds: 5
+  timeoutSeconds: 3
+
+# Add additional settings to the stardog config file. e.g.
+# additionalStardogProperties: |
+#   logging.slow_query.enabled=true
+#   logging.slow_query.time=10s
+additionalStardogProperties: |
+
+# The name and port for the Stardog cluster that the cache target will connect to
+cluster:
+  name: stardog-cluster
+  port: 5820

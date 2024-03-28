@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cachetarget
+description: Helm chart to deploy Stardog Cache Targets
+version: 0.1.0
+appVersion: latest
+home: https://github.com/stardog-union/helm-charts
+icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
+maintainers:
+  - name: Stardog Union
+    email: tech@stardog.com
+    url: https://www.stardog.com

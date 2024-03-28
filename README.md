@@ -44,6 +44,9 @@ $ helm install <helm-release-name> --namespace <your-namespace> stardog/stardog
 See the Stardog chart's [README](https://github.com/stardog-union/helm-charts/blob/master/charts/stardog/README.md)
 for a list of configuration parameters.
 
+See the Stardog Cache Target's chart's [README](https://github.com/stardog-union/helm-charts/blob/master/charts/cachetarget/README.md)
+for instructions on how to deploy a cache target as well as a list of its configuration parameters.
+
 Deleting
 --------
 
