@@ -31,7 +31,7 @@ function change_pw {
     PORT=${2}
 
     echo "/opt/stardog/bin/stardog-admin --server http://${HOST}:${PORT} user passwd -N xxxxxxxxxxxxxx"
-    NEW_PW=$(cat /etc/stardog-password/adminpw)
+    NEW_PW=${STARDOG_ADMINPW}
     /opt/stardog/bin/stardog-admin --server http://${HOST}:${PORT} user passwd -N ${NEW_PW}
     if [[ $? -eq 0 ]];
     then
@@ -78,8 +78,7 @@ function setup_cache_target {
     CLUSTER_NAME=${3}
     CLUSTER_PORT=${4}
     NAMESPACE=${5}
-    THIS_PW=$(cat /etc/stardog-password/adminpw)
-    CLUSTER_PW=$(cat /etc/cluster-password/adminpw)
+    THIS_PW=${STARDOG_ADMINPW}
 
     set -x
     set +e
@@ -97,6 +96,6 @@ function cleanup_cache_target {
     set +e
     set -x
     echo "Stopping cache server"
-    /opt/stardog/bin/stardog-admin server stop -p $(cat /etc/stardog-password/adminpw)
+    /opt/stardog/bin/stardog-admin server stop -p ${STARDOG_ADMINPW}
     )
 }

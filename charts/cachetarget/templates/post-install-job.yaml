@@ -33,13 +33,6 @@ spec:
       - name: post-install-job
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        volumeMounts:
-        - name: {{ include "cachetarget.fullname" . }}-password
-          mountPath: /etc/stardog-password
-          readOnly: true
-        - name: {{ .Values.cluster.name }}-password
-          mountPath: /etc/cluster-password
-          readOnly: true
         env:
         - name: PORT
           value: "{{ .Values.ports.server }}"
@@ -47,6 +40,24 @@ spec:
           value: "{{ include "cachetarget.fullname" . }}.{{ include "cachetarget.namespace" . }}"
         - name: DELAY
           value: "{{ .Values.waitForStartSeconds }}"
+        - name: STARDOG_ADMINPW
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.admin.passwordSecretRef }}
+              name: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+              name: {{ include "cachetarget.fullname" . }}-password
+{{- end }}
+              key: password
+        - name: CLUSTER_PW
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.admin.clusterPasswordSecretRef }}
+              name: {{ .Values.admin.clusterPasswordSecretRef }}
+{{ else }}
+              name: {{ .Values.cluster.name }}-password
+{{- end }}
+              key: password
         command:
         - /bin/bash
         - -c

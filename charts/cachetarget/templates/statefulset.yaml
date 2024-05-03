@@ -38,13 +38,19 @@ spec:
             value: "-XX:ActiveProcessorCount={{ .Values.resources.requests.cpu }}  -Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
           - name: STARDOG_TMP_PATH
             value: "{{ .Values.tmpDir }}"
+          - name: STARDOG_ADMINPW
+            valueFrom:
+              secretKeyRef:
+{{- if .Values.admin.passwordSecretRef }}
+                name: {{ .Values.admin.passwordSecretRef }}
+{{ else }}
+                name: {{ include "cachetarget.fullname" . }}-password
+{{- end }}
+                key: password
         ports:
         - containerPort: {{ .Values.ports.server }}
           name: server
         volumeMounts:
-        - name: {{ include "cachetarget.fullname" . }}-password
-          mountPath: /etc/stardog-password
-          readOnly: true
         - name: stardog-license
           mountPath: /etc/stardog-license
           readOnly: true
