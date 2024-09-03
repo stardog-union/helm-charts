@@ -1,3 +1,9 @@
+# 2.1.0 (2024-09-03)
+
+* Use environment variables for passwords instead of mounting as a file (#106)
+* Add support for cache targets (#108)
+* Allow image pull secrets for docker images (#109)
+
 # 2.0.10 (2023-09-25)
 
 * Add startupProbe (#97)
