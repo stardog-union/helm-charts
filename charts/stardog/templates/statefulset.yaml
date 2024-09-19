@@ -126,15 +126,6 @@ spec:
           value: "{{ .Values.tmpDir }}"
         - name: STARDOG_SERVER_START_ARGS
           value: "{{ .Values.serverStartArgs }}"
-        - name: STARDOG_ADMINPW
-          valueFrom:
-            secretKeyRef:
-{{- if .Values.admin.passwordSecretRef }}
-              name: {{ .Values.admin.passwordSecretRef }}
-{{ else }}
-              name: {{ include "stardog.fullname" . }}-password
-{{- end }}
-              key: password
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
@@ -165,14 +156,6 @@ spec:
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - /bin/bash
-              - -c
-              - |
-                /opt/stardog/bin/stardog-admin server stop -u admin -p ${STARDOG_ADMINPW}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- if or (and .Values.image.username .Values.image.password) .Values.image.imagePullSecret (and .Values.busybox.image.username .Values.busybox.image.password) .Values.busybox.image.imagePullSecret }}
       imagePullSecrets:

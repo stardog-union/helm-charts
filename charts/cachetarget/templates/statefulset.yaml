@@ -38,15 +38,6 @@ spec:
             value: "-XX:ActiveProcessorCount={{ .Values.resources.requests.cpu }}  -Djava.io.tmpdir={{ .Values.tmpDir }} {{ .Values.javaArgs }}"
           - name: STARDOG_TMP_PATH
             value: "{{ .Values.tmpDir }}"
-          - name: STARDOG_ADMINPW
-            valueFrom:
-              secretKeyRef:
-{{- if .Values.admin.passwordSecretRef }}
-                name: {{ .Values.admin.passwordSecretRef }}
-{{ else }}
-                name: {{ include "cachetarget.fullname" . }}-password
-{{- end }}
-                key: password
         ports:
         - containerPort: {{ .Values.ports.server }}
           name: server
@@ -92,17 +83,6 @@ spec:
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - /bin/bash
-              - -c
-              - |
-                set -ex
-                {{ .Files.Get "files/utils.sh" | indent 16 }}
-                echo "Destroying the cache target"
-                cleanup_cache_target
 {{- if (and .Values.image.username .Values.image.password) }}
       imagePullSecrets:
   {{- if and .Values.image.username .Values.image.password }}

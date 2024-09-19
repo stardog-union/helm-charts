@@ -90,12 +90,3 @@ function setup_cache_target {
     fi
     )
 }
-
-function cleanup_cache_target {
-    (
-    set +e
-    set -x
-    echo "Stopping cache server"
-    /opt/stardog/bin/stardog-admin server stop -p ${STARDOG_ADMINPW}
-    )
-}
