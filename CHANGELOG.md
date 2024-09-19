@@ -1,3 +1,7 @@
+# 2.1.1 (2024-09-19)
+
+* Remove preStop hook that issues server stop to the Stardog pod and rely on SIGTERM from k8s (#111)
+
 # 2.1.0 (2024-09-03)
 
 * Use environment variables for passwords instead of mounting as a file (#106)
