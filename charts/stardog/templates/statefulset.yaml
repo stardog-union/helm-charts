@@ -68,23 +68,21 @@ spec:
         - /bin/sh
         - -c
         - |
-        {{ if .Values.zookeeper.enabled }}
-         while :
-          do
-            echo "Checking for ZK followers"
-            ZK_MNTR=$(echo mntr | nc {{ .Release.Name }}-zookeeper-headless.{{ include "stardog.namespace" . }} 2181)
-            ZK_FOLLOWERS=$(echo "${ZK_MNTR}" | grep zk_synced_followers | awk '{print $2}')
-            echo "Currently ${ZK_FOLLOWERS} ZK followers"
-            if [[ "${ZK_FOLLOWERS}" -gt "1" ]]; then
-              echo "ZK has two sync'd followers (with the leader that makes 3)"
-              exit 0
-            fi
-            sleep 1
-          done
-        {{ else }}
-          echo "Using existing zookeeper"
-        {{ end }}
-{{ end }}
+        {{- if .Values.zookeeper.enabled }}
+            while :
+              do
+              echo "Checking for ZK readiness"
+              ZK_OK=$(echo ruok | nc {{ .Release.Name }}-zookeeper-headless.{{ .Release.Namespace }} 2181)
+              if [[ "${ZK_OK}" == "imok" ]]; then
+                echo "ZK reports ready and in good state"
+                exit 0
+              fi
+              sleep 1
+            done
+            {{- else }}
+              echo "Using existing zookeeper"
+            {{- end }}
+{{- end }}
       containers:
       - name: {{ include "stardog.fullname" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
