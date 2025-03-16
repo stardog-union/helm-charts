@@ -1,0 +1,79 @@
+---
+# The namespace for Launchpad resources that override the release namespace
+# namespaceOverride: launchpad
+
+# The number of Launchpad replicas; keep this at 1
+replicaCount: 1
+
+# The service type to use for Launchpad
+service:
+  type: LoadBalancer
+  port: 8080
+  annotations: {}
+  # loadBalancerIP: 0.0.0.0
+
+image:
+  registry: https://registry.hub.docker.com/v2/repositories
+  repository: stardog/launchpad
+# Alternative config to pull from Stardog private repository
+  # registry: https://stardog-stardog-apps.jfrog.io
+  # repository: stardog-stardog-apps.jfrog.io/launchpad
+  tag: v3.0.1
+  pullPolicy: IfNotPresent
+  # username:
+  # password:
+  # imagePullSecret:
+
+# The storage class and size to use for Launchpad data volume
+persistence:
+  storageClass: standard
+  size: 1Gi
+
+nodeSelector: {}
+tolerations: []
+#  - key: key1
+#    value: value1
+#    effect: NoSchedule
+
+antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
+
+# Stardog should have at least 2 CPUs. The CPU request value is used to set
+# -XX:ActiveProcessorCount=N for the JVM.
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 1
+    memory: 2Gi
+
+
+# these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
+securityContext:
+  enabled: false
+  seccompProfile:
+    type: RuntimeDefault
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+env:
+  # Basic configuration
+  BASE_URL: ""
+  FRIENDLY_NAME: "Stardog Applications"
+  SECURE: false
+  COOKIE_SECRET: ""
+
+  # Azure Login Provider configuration
+  AZURE_AUTH_ENABLED: true
+  AZURE_CLIENT_ID: ""
+  AZURE_CLIENT_SECRET: ""
+  AZURE_TENANT: "organizations"
+
+  # Azure SSO Connection configuration
+  SSOCONNECTION_CONNECTION1_AZURE_CLIENT_ID: ""
+  SSOCONNECTION_CONNECTION1_AZURE_CLIENT_SECRET: ""
+  SSOCONNECTION_CONNECTION1_AZURE_TENANT: ""
+  SSOCONNECTION_CONNECTION1_AZURE_STARDOG_ENDPOINT: ""
+  SSOCONNECTION_CONNECTION1_AZURE_DISPLAY_NAME: ""

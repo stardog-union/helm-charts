@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "launchpad.fullname" . }}
+  namespace: {{ include "launchpad.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "launchpad.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: server
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "launchpad.fullname" . }}
+  serviceName: {{ include "launchpad.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "launchpad.fullname" . }}
+        helm.sh/chart: {{ include "launchpad.chart" . }}
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        app.kubernetes.io/component: server
+    spec:
+      {{- with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+{{ if .Values.securityContext.enabled }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup  }}
+{{ end }}
+      affinity:
+        podAntiAffinity:
+          {{ .Values.antiAffinity }}:
+        {{- if eq .Values.antiAffinity "requiredDuringSchedulingIgnoredDuringExecution" }}
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                - {{ include "launchpad.fullname" . }}
+            topologyKey: "kubernetes.io/hostname"
+        {{- else }}
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - {{ include "launchpad.fullname" . }}
+              topologyKey: "kubernetes.io/hostname"
+        {{- end }}
+      containers:
+      - name: {{ include "launchpad.fullname" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - name: launchpad-data
+          mountPath: /data
+          readOnly: false
+        env:
+        - name: BASE_URL
+          value: "{{ .Values.env.BASE_URL }}"
+        - name: FRIENDLY_NAME
+          value: "{{ .Values.env.FRIENDLY_NAME }}"
+        - name: SECURE
+          value: "{{ .Values.env.SECURE }}"
+        - name: COOKIE_SECRET
+          value: "{{ .Values.env.COOKIE_SECRET }}"
+        - name: AZURE_AUTH_ENABLED
+          value: "{{ .Values.env.AZURE_AUTH_ENABLED }}"
+        - name: AZURE_CLIENT_ID
+          value: "{{ .Values.env.AZURE_CLIENT_ID }}"
+        - name: AZURE_CLIENT_SECRET
+          value: "{{ .Values.env.AZURE_CLIENT_SECRET }}"
+        - name: AZURE_TENANT
+          value: "{{ .Values.env.AZURE_TENANT }}"
+        - name: SSOCONNECTION_CONNECTION1_AZURE_CLIENT_ID
+          value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_CLIENT_ID }}"
+        - name: SSOCONNECTION_CONNECTION1_AZURE_CLIENT_SECRET
+          value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_CLIENT_SECRET }}"
+        - name: SSOCONNECTION_CONNECTION1_AZURE_TENANT
+          value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_TENANT }}"
+        - name: SSOCONNECTION_CONNECTION1_AZURE_STARDOG_ENDPOINT
+          value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_STARDOG_ENDPOINT }}"
+        - name: SSOCONNECTION_CONNECTION1_AZURE_DISPLAY_NAME
+          value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_DISPLAY_NAME }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+{{- if or (and .Values.image.username .Values.image.password) .Values.image.imagePullSecret }}
+      imagePullSecrets:
+  {{- if and .Values.image.username .Values.image.password }}
+      - name: {{ .Release.Name }}-image-pull-secret
+  {{- end}}
+  {{- if .Values.image.imagePullSecret }}
+      - name: {{ .Values.image.imagePullSecret }}
+  {{- end}}
+{{- end}}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: launchpad-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]{{ if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass }}{{ end }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}

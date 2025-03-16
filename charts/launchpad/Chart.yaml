@@ -1,0 +1,11 @@
+apiVersion: v2
+name: launchpad
+description: Helm chart to deploy Launchpad
+version: 0.1.0
+appVersion: 3.0.1
+home: https://github.com/stardog-union/helm-charts
+icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
+maintainers:
+  - name: Stardog Union
+    email: tech@stardog.com
+    url: https://www.stardog.com
