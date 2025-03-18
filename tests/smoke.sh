@@ -42,7 +42,7 @@ function install_stardog() {
 
 function helm_setup_cluster() {
 	echo "Creating stardog namespace"
-	kubectl create ns stardog
+	kubectl create ns ${NAMESPACE}
 
 	echo "Adding license"
 	kubectl -n ${NAMESPACE} create secret generic stardog-license --from-file stardog-license-key.bin=${HOME}/stardog-license-key.bin

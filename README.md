@@ -15,7 +15,7 @@ As of version 2.0.0 of the Stardog Helm charts, ZooKeeper 3.5.7 is now deployed
 with the [Bitnami](https://github.com/bitnami/charts/tree/master/bitnami/zookeeper)
 ZooKeeper chart. Stardog 7.4.2 includes preview support for ZooKeeper 3.5.x so you
 must be running that version of Stardog or later. Please see the Stardog chart
-[README](https://github.com/stardog-union/helm-charts/blob/master/charts/stardog/README.md)
+[README](https://github.com/stardog-union/helm-charts/blob/develop/charts/stardog/README.md)
 for instructions on how to upgrade from version 1.x of the charts to version 2.
 
 We strongly recommend that the charts request at least 2 CPUs or more for Stardog.
@@ -41,10 +41,10 @@ $ helm repo add stardog https://stardog-union.github.io/helm-charts/
 $ helm install <helm-release-name> --namespace <your-namespace> stardog/stardog
 ```
 
-See the Stardog chart's [README](https://github.com/stardog-union/helm-charts/blob/master/charts/stardog/README.md)
+See the Stardog chart's [README](https://github.com/stardog-union/helm-charts/blob/develop/charts/stardog/README.md)
 for a list of configuration parameters.
 
-See the Stardog Cache Target's chart's [README](https://github.com/stardog-union/helm-charts/blob/master/charts/cachetarget/README.md)
+See the Stardog Cache Target's chart's [README](https://github.com/stardog-union/helm-charts/blob/develop/charts/cachetarget/README.md)
 for instructions on how to deploy a cache target as well as a list of its configuration parameters.
 
 Deleting
@@ -68,9 +68,9 @@ sudo mv minikube /usr/local/bin/
 ```
 
 ## Start minikube
-Your k8s version should be the same as your kubectl version. This will update you ~/.kube/config file and set minikube to the current context.
+Your k8s version should be the same as your kubectl version. This will update your ~/.kube/config file and set minikube to the current context.
 ```
-minikube start --driver=docker --kubernetes-version=v.1.29.0
+minikube start --driver=docker --kubernetes-version=v1.32.2
 ```
 
 ## Set up the Stardog license
@@ -87,10 +87,10 @@ kubectl -n <your-namespace> create secret generic stardog-license --from-file st
 ## Install Stardog as a helm release
 ```
 helm install stardog charts/stardog/ --wait --timeout 15m -f tests/minikube.yaml \
- --set "cluster.enabled=false" \
+--set "cluster.enabled=false" \
 --set "replicaCount=1" \
 --set "zookeeper.enabled=false"
 ```
 
 ## Run the tests
- ./tests/smoke.sh
+`./tests/smoke.sh`
