@@ -37,8 +37,6 @@ tolerations: []
 
 antiAffinity: requiredDuringSchedulingIgnoredDuringExecution
 
-# Stardog should have at least 2 CPUs. The CPU request value is used to set
-# -XX:ActiveProcessorCount=N for the JVM.
 resources:
   requests:
     cpu: 500m
@@ -59,6 +57,9 @@ securityContext:
   fsGroup: 1001
 
 env:
+  # NOTE: remove the DEBUG line once we have CLOUD-3086 (add env var to specify num of gunicorn workers) fixed
+  DEBUG: true
+
   # Basic configuration
   BASE_URL: ""
   FRIENDLY_NAME: "Stardog Applications"

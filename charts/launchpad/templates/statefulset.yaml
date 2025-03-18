@@ -72,6 +72,10 @@ spec:
           mountPath: /data
           readOnly: false
         env:
+{{- if .Values.env.DEBUG }}
+        - name: DEBUG
+          value: "{{ .Values.env.DEBUG }}"
+{{- end}}
         - name: BASE_URL
           value: "{{ .Values.env.BASE_URL }}"
         - name: FRIENDLY_NAME
