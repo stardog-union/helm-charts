@@ -65,9 +65,9 @@ spec:
         image: {{ .Values.busybox.image.repository }}:{{ .Values.busybox.image.tag }}
         imagePullPolicy: {{ .Values.busybox.image.pullPolicy }}
         command:
-          - /bin/sh
-          - -c
-          - |
+        - /bin/sh
+        - -c
+        - |
           {{ if .Values.zookeeper.enabled }}
           MAX_RETRIES=30
           COUNT=0
@@ -75,7 +75,7 @@ spec:
             echo "Checking for ZK followers (attempt $((COUNT+1))/$MAX_RETRIES)"
             # Try the mntr command over TCP to ZK
             ZK_MNTR=$(echo mntr | nc {{ .Release.Name }}-zookeeper-headless.{{ include "stardog.namespace" . }} 2181 2>/dev/null || true)
-            
+
             # Extract the number of synced followers from the mntr output
             ZK_FOLLOWERS=$(echo "${ZK_MNTR}" | grep zk_synced_followers | awk '{print $2}')
             echo "Currently ${ZK_FOLLOWERS:-0} ZK followers"
@@ -85,7 +85,7 @@ spec:
               echo "ZK has two sync'd followers (with the leader, that makes 3)"
               exit 0
             fi
-            
+
             # Wait a bit before retrying
             sleep 1
             COUNT=$((COUNT+1))

@@ -70,7 +70,7 @@ sudo mv minikube /usr/local/bin/
 ## Start minikube
 Your k8s version should be the same as your kubectl version. This will update your ~/.kube/config file and set minikube to the current context.
 ```
-minikube start --driver=docker --kubernetes-version=v1.32.2
+minikube start --driver=docker --kubernetes-version=v1.32.0
 ```
 
 ## Set up the Stardog license
