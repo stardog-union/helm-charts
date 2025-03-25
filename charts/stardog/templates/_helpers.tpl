@@ -19,7 +19,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- $namespace := include "stardog.namespace" . -}}
 {{- $name := .Release.Name -}}
 {{- range int .Values.zookeeper.replicaCount | until -}}
-{{- $noop := printf "%s-zookeeper-%d.%s-zookeeper-headless.%s:2181" $name . $name $namespace | append $zk.servers | set $zk "servers" -}}
+{{- $noop := printf "%s-zookeeper-%d.%s-zookeeper-headless.%s.svc.cluster.local:2181" $name . $name $namespace | append $zk.servers | set $zk "servers" -}}
 {{- end -}}
 {{- join "," $zk.servers -}}
 {{- end -}}

@@ -32,4 +32,36 @@ data:
     pack.zookeeper.address={{ if .Values.zookeeper.enabled }}{{- template "zkservers" . }}{{ else }}{{ .Values.zookeeper.addresses }}{{ end }}
     pack.node.join.retry.count=15
     pack.node.join.retry.delay=1m
+    {{- if .Values.jwtConfig.enabled }}
+    jwt.conf=/etc/stardog-conf/jwt.yaml
+    {{- end }}
+
   {{- .Values.additionalStardogProperties | nindent 4 }}
+---
+{{- if .Values.jwtConfig.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "stardog.fullname" . }}-jwt
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+
+data:
+  jwt.yaml: |
+    confVersion: "1.0"
+    deploymentName: stardog-server
+    issuers:
+      https://login.microsoftonline.com/{{ .Values.jwtConfig.azureTenantId }}/v2.0:
+        usernameTemplates: [ "{preferred_username}", "{oid}" ]
+        audience: {{ .Values.jwtConfig.azureClientId }}
+        algorithms:
+          RS256:
+            keyUrl: https://login.microsoftonline.com/{{ .Values.jwtConfig.azureTenantId }}/discovery/v2.0/keys
+        autoCreateUsers: true
+        rolesClaimPath: roles
+{{- end }}
+
