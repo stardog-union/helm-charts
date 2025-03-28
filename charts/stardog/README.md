@@ -70,7 +70,7 @@ steps required as part of the upgrade process k8s jobs will need to be used
 to run the steps on the Stardog home directories in the PVCs.
 
 See the [Stardog documentation](https://docs.stardog.com/high-availability-cluster/operating-the-cluster/#upgrading-the-cluster)
-for instructuions on how to upgrade Stardog Cluster.
+for instructions on how to upgrade Stardog Cluster.
 
 ### Upgrading from 1.x to 2.x
 
