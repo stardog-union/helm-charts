@@ -42,7 +42,7 @@ function install_stardog() {
 
 function helm_setup_cluster() {
 	echo "Creating stardog namespace"
-	kubectl create ns stardog
+	kubectl create ns ${NAMESPACE}
 
 	echo "Adding license"
 	kubectl -n ${NAMESPACE} create secret generic stardog-license --from-file stardog-license-key.bin=${HOME}/stardog-license-key.bin
@@ -339,6 +339,49 @@ function helm_delete_cache_target() {
 	echo "Stardog cache target deleted."
 }
 
+function helm_install_jwt_enabled() {
+	echo "Installing single node Stardog with JWT enabled"
+
+	echo "Running helm install for ${HELM_RELEASE_NAME}"
+
+	pushd charts/stardog/
+	helm dependencies update
+	popd
+
+	helm install ${HELM_RELEASE_NAME} charts/stardog \
+	             --namespace ${NAMESPACE} \
+	             --wait \
+	             --timeout 15m0s \
+	             -f ./tests/minikube.yaml \
+	             --set "cluster.enabled=false" \
+	             --set "replicaCount=1" \
+	             --set "zookeeper.enabled=false" \
+                 --set "jwtConfig.enabled=true" \
+                 --set "jwtConfig.azureClientId=someValue" \
+                 --set "jwtConfig.azureTenantId=someValue"
+
+	rc=$?
+
+	if [ ${rc} -ne 0 ]; then
+		echo "Helm install for Stardog instance failed, exiting"
+		exit ${rc}
+	fi
+
+	echo "Single node Stardog installed."
+}
+
+function check_jwt_configmap_exists() {
+	# This test should be sufficient
+	kubectl -n ${NAMESPACE} get configmap ${HELM_RELEASE_NAME}-${NAMESPACE}-jwt || exit 1
+
+	# Another test, just to fully confirm
+	stardog_pod_name=$(kubectl get pods -n ${NAMESPACE} -o custom-columns=:metadata.name  | grep stardog | head -1)
+	kubectl  -n ${NAMESPACE} exec ${stardog_pod_name} -- ls /var/opt/stardog/jwt.yaml || exit 1
+
+	echo "JWT successfully setup"
+
+}
+
 echo "Starting the Helm smoke tests"
 validate_helm_chart
 dependency_checks
@@ -367,13 +410,17 @@ echo "Cleaning up Helm deployment"
 helm_delete_stardog_release
 check_helm_release_deleted
 
+echo "Test: Single node stardog with JWT enabled"
+helm_install_jwt_enabled
+check_jwt_configmap_exists
+helm_delete_stardog_release
+check_helm_release_deleted
+
 echo "Test: single node Stardog without ZooKeeper"
 helm_install_single_node_stardog
 check_helm_release_exists
 check_expected_num_stardog_pods 1
 check_expected_num_zk_pods 0
-
-echo "Cleaning up Helm deployment"
 helm_delete_stardog_release
 check_helm_release_deleted
 

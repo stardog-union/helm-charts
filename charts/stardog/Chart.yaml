@@ -1,7 +1,7 @@
 apiVersion: v2
 name: stardog
-description: Helm chart to deploy Stardog Cluster and associated services
-version: 2.1.1
+description: Helm chart to deploy a Stardog cluster
+version: 3.0.0
 appVersion: latest
 home: https://github.com/stardog-union/helm-charts
 icon: https://s3.amazonaws.com/stardog-logos.public/stardog-logo.png
@@ -11,6 +11,6 @@ maintainers:
     url: https://www.stardog.com
 dependencies:
   - name: zookeeper
-    version: 8.1.2
-    repository: https://raw.githubusercontent.com/bitnami/charts/eb5f9a9513d987b519f0ecd732e7031241c50328/bitnami
+    version: 13.7.2
+    repository: https://charts.bitnami.com/bitnami
     condition: zookeeper.enabled

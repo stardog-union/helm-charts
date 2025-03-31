@@ -5,9 +5,9 @@ jobs:
        image: ubuntu-2204:2024.05.1
 
      environment:
-       K8S_VERSION: 1.21.14
+       K8S_VERSION: 1.32.0
        KUBECONFIG: /home/circleci/.kube/config
-       MINIKUBE_VERSION: v1.26.1
+       MINIKUBE_VERSION: v1.35.0
        MINIKUBE_WANTUPDATENOTIFICATION: false
        MINIKUBE_WANTREPORTERRORPROMPT: false
        MINIKUBE_HOME: /home/circleci
@@ -48,7 +48,16 @@ jobs:
        - run:
            name: Start minikube
            command: |
-             sudo -E minikube start --vm-driver=none --cpus 2 --memory 4096 --kubernetes-version=${K8S_VERSION}
+
+            # Prevents running into permissions issues when running minikube as non-root.
+            sudo usermod -aG docker circleci
+            mkdir -p /home/circleci/.kube /home/circleci/.minikube
+            sudo chown -R circleci:circleci /home/circleci/.kube /home/circleci/.minikube
+
+            sudo -iu circleci bash <<EOF
+              minikube start --driver=docker --cpus=2 --memory=4096 --kubernetes-version=${K8S_VERSION}
+            EOF
+
        - run:
            name: Setup license
            command: |
