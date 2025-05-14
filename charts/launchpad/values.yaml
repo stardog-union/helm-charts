@@ -15,14 +15,8 @@ service:
 image:
   registry: https://registry.hub.docker.com/v2/repositories
   repository: stardog/launchpad
-# Alternative config to pull from Stardog private repository
-  # registry: https://stardog-stardog-apps.jfrog.io
-  # repository: stardog-stardog-apps.jfrog.io/launchpad
   tag: v3.0.1
   pullPolicy: IfNotPresent
-  # username:
-  # password:
-  # imagePullSecret:
 
 # The storage class and size to use for Launchpad data volume
 persistence:
@@ -48,7 +42,7 @@ resources:
 
 # these allow you to configure the UID and group ID used by the container when it's running, and the fsGroup sets the group id for the volume-mounts
 securityContext:
-  enabled: false
+  enabled: true
   seccompProfile:
     type: RuntimeDefault
   runAsNonRoot: true
