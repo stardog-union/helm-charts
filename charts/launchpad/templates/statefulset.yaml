@@ -15,7 +15,8 @@ spec:
     matchLabels:
       app: {{ include "launchpad.fullname" . }}
   serviceName: {{ include "launchpad.fullname" . }}
-  replicas: {{ .Values.replicaCount }}
+  # Currently we only support 1 replica, so we hardcode it here to prevent any issues
+  replicas: 1
   podManagementPolicy: {{ .Values.podManagementPolicy }}
   template:
     metadata:

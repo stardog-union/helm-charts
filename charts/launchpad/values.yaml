@@ -2,9 +2,6 @@
 # The namespace for Launchpad resources that override the release namespace
 # namespaceOverride: launchpad
 
-# The number of Launchpad replicas; keep this at 1
-replicaCount: 1
-
 # The service type to use for Launchpad
 service:
   type: LoadBalancer
