@@ -41,6 +41,9 @@ service:
   annotations: {}
   # loadBalancerIP: 0.0.0.0
 
+ingress:
+  enabled: false
+
 # The server port is the port to expose the Stardog server
 # The sql port is the port to expose Stardog's business intelligence server
 ports:

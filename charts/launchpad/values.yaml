@@ -9,6 +9,9 @@ service:
   annotations: {}
   # loadBalancerIP: 0.0.0.0
 
+ingress:
+  enabled: false
+
 image:
   registry: https://registry.hub.docker.com/v2/repositories
   repository: stardog/launchpad

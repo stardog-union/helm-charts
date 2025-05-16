@@ -17,8 +17,8 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 8080
-    targetPort: {{ .Values.service.port }}
+    port: {{ .Values.ports.http }}
+    targetPort: http
   type: {{ .Values.service.type }}
   {{- if .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
