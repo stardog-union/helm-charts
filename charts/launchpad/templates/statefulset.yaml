@@ -79,6 +79,12 @@ spec:
 {{- end}}
         - name: BASE_URL
           value: "{{ .Values.env.BASE_URL }}"
+        - name: SHARED_USER_AUTH_ENABLED
+          value: "{{ .Values.env.SHARED_USER_AUTH_ENABLED }}"
+        - name: SHARED_USER_USERNAME
+          value: "{{ .Values.env.SHARED_USER_USERNAME }}"
+        - name: SHARED_USER_PASSWORD
+          value: "{{ .Values.env.SHARED_USER_PASSWORD }}"
         - name: FRIENDLY_NAME
           value: "{{ .Values.env.FRIENDLY_NAME }}"
         - name: SECURE
