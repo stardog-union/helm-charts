@@ -33,7 +33,7 @@ data:
     pack.node.join.retry.count=15
     pack.node.join.retry.delay=1m
     {{- if .Values.jwtConfig.enabled }}
-    jwt.conf=/etc/stardog-conf/jwt.yaml
+    jwt.conf=/var/opt/stardog/jwt.yaml
     {{- end }}
 
   {{- .Values.additionalStardogProperties | nindent 4 }}
