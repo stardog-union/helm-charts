@@ -65,7 +65,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         ports:
-        - containerPort: {{ .Values.service.port }}
+        - containerPort: {{ .Values.ports.http }}
           name: http
           protocol: TCP
         volumeMounts:
@@ -87,6 +87,8 @@ spec:
           value: "{{ .Values.env.SHARED_USER_PASSWORD }}"
         - name: FRIENDLY_NAME
           value: "{{ .Values.env.FRIENDLY_NAME }}"
+        - name: K8S_DEPLOYMENT
+          value: "{{ .Values.env.K8S_DEPLOYMENT }}"
         - name: SECURE
           value: "{{ .Values.env.SECURE }}"
         - name: COOKIE_SECRET

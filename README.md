@@ -28,7 +28,7 @@ Prerequisites
 - Stardog Cluster license file
 - Helm v3
 - Persistent volume support
-- Load balancer service
+- Load balancer service or Ingress controller
 - Familiarity with Stardog Cluster
 - Familiarity with Apache ZooKeeper
 
@@ -40,6 +40,33 @@ $ kubectl -n <your-namespace> create secret generic stardog-license --from-file 
 $ helm repo add stardog https://stardog-union.github.io/helm-charts/
 $ helm install <helm-release-name> --namespace <your-namespace> stardog/stardog
 ```
+
+### Using Ingress
+
+The charts now support using Ingress for exposing Stardog and Launchpad services. To enable this, you need to have an ingress controller installed, like the [NGINX Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/).
+You also need an SSL certificate, and its associated private key to be used by the controller, and you also need to be able
+to point your DNS records to the Ingress object URL once created. Finally, you need to be able to create secrets in the namespace where this is deployed. To find the structure of this secret object, follow https://kubernetes.io/docs/concepts/services-networking/ingress/#tls.
+
+
+Here's an example of how to configure the values needed for ingress to work:
+
+```
+# Ingress configuration for any component. Configure it accordingly for each <compoonent> required, like stardog, or launchpad.
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    # You must own example.com, and you need to be able to point your DNS records to the ingress URL.
+    - host: acme-<component>.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+  - hosts: ["acme-<component>.example.com"]
+    # You need to manually create this secret object
+    secretName: stardog-tls
+```
+
 
 See the Stardog chart's [README](https://github.com/stardog-union/helm-charts/blob/develop/charts/stardog/README.md)
 for a list of configuration parameters.

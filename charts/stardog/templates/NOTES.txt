@@ -1,1 +1,21 @@
 Stardog Cluster
+
+{{- if .Values.ingress.enabled }}
+Your Stardog instance can be accessed through the Ingress at:
+{{- range .Values.ingress.hosts }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}
+{{- end }}
+{{- else }}
+Get the Stardog URL by running these commands:
+{{- if contains "LoadBalancer" .Values.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status by running 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ include "stardog.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "stardog.fullname" . }} --template "{{ "{{ range (index .status.loadBalancer.ingress 0) }}{{ . }}{{ end }}" }}")
+  echo "Stardog URL: http://$SERVICE_IP:{{ .Values.ports.server }}"
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "stardog.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Stardog URL: http://127.0.0.1:{{ .Values.ports.server }}"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME {{ .Values.ports.server }}:$CONTAINER_PORT
+{{- end }}
+{{- end }}
