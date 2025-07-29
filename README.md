@@ -68,11 +68,14 @@ ingress:
 ```
 
 
-See the Stardog chart's [README](https://github.com/stardog-union/helm-charts/blob/develop/charts/stardog/README.md)
+See the Stardog chart's [README](./charts/stardog/README.md)
 for a list of configuration parameters.
 
-See the Stardog Cache Target's chart's [README](https://github.com/stardog-union/helm-charts/blob/develop/charts/cachetarget/README.md)
+See the Stardog Cache Target's chart's [README](./charts/cachetarget/README.md)
 for instructions on how to deploy a cache target as well as a list of its configuration parameters.
+
+See the Voicebox chart's [README](./charts/voicebox/README.md)
+for instructions on how to deploy Voicebox and a list of its configuration parameters.
 
 Deleting
 --------

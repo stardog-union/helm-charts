@@ -1,0 +1,52 @@
+# ------------------------------------------------------------------------------
+# Voicebox Configuration
+# ------------------------------------------------------------------------------
+enabled: true
+replicaCount: 1
+# Log level for Voicebox service. Options: DEBUG, INFO, WARNING, ERROR
+logLevel: INFO
+securityContext:
+  seccompProfile:
+    type: RuntimeDefault
+  runAsNonRoot: true
+  runAsUser: 100000
+  runAsGroup: 100000
+  fsGroup: 100000
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+service:
+  type: ClusterIP
+  port: 8080
+  loadBalancerIP: ""
+  annotations: {}
+image:
+  registry: stardog-stardog-apps.jfrog.io
+  repository: voicebox-service
+  tag: current
+  pullPolicy: IfNotPresent 
+  # Request user credentials from Stardog team.
+  username: ""
+  password: ""
+  pullSecrets: []
+configFile: |
+  # {
+  #   "agent_selection_type": "llm",
+  #   "enable_lineage": true,
+  #   "enable_external_llm": true,
+  #   "enable_analytics": true,
+  #   "enable_charts": true,
+  #   "use_agents_automatically": false,
+  #   "default_llm_config": {
+  #     "llm_provider": "azure",
+  #     "llm_name": "Meta-Llama-3.1-70B-Instruct",
+  #     "server_url": "https://add-url-model.services.ai.azure.com/models"
+  #   }
+  # }
+environmentVariables:
+  AZURE_API_KEY: "azure-api-key"
+  PRODUCTION: 1 # 0 for development, 1 for production
+resources: {}
+nodeSelector: {}
+affinity: {}
+tolerations: []

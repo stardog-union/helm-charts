@@ -101,6 +101,10 @@ spec:
           value: "{{ .Values.env.AZURE_CLIENT_SECRET }}"
         - name: AZURE_TENANT
           value: "{{ .Values.env.AZURE_TENANT }}"
+        {{- if .Values.VOICEBOX_SERVICE_ENDPOINT }}
+        - name: VOICEBOX_SERVICE_ENDPOINT
+          value: "{{ .Values.env.VOICEBOX_SERVICE_ENDPOINT }}"
+        {{- end }}
         - name: SSOCONNECTION_CONNECTION1_AZURE_CLIENT_ID
           value: "{{ .Values.env.SSOCONNECTION_CONNECTION1_AZURE_CLIENT_ID }}"
         - name: SSOCONNECTION_CONNECTION1_AZURE_CLIENT_SECRET
