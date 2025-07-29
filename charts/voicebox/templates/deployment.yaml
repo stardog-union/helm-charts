@@ -1,0 +1,83 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "voicebox.fullname" . }}
+  namespace: {{ include "voicebox.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "voicebox.chart" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "voicebox.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "voicebox.fullname" . }}
+        helm.sh/chart: {{ include "voicebox.chart" . }}
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      {{- if or .Values.image.pullSecrets (and .Values.image.username .Values.image.password) }}
+      imagePullSecrets:
+        {{- if .Values.image.pullSecrets }}
+        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
+        {{- end }}
+        {{- if and .Values.image.username .Values.image.password }}
+        - name: {{ .Release.Name }}-image-pull-secret
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ include "voicebox.fullname" . }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          securityContext: 
+            {{- toYaml .Values.containerSecurityContext | nindent 10 }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}  
+              protocol: TCP
+          env:
+            - name: VBX_CONFIG_FILE
+              value: /voicebox-config/vbx_config.json
+            - name: LOG_LEVEL
+              value: {{ .Values.logLevel | quote }}
+          {{- range $key, $value := .Values.environmentVariables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          volumeMounts:
+            - name: {{ include "voicebox.fullname" . }}
+              mountPath: /voicebox-config/vbx_config.json
+              subPath: vbx_config.json
+              readOnly: true
+          resources:
+{{- toYaml .Values.resources | indent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: {{ include "voicebox.fullname" . }}
+          configMap:
+            name: {{ include "voicebox.fullname" . }}
+            items:
+              - key: vbx_config.json
+                path: vbx_config.json
