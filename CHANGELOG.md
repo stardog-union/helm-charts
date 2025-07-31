@@ -1,3 +1,14 @@
+# 3.1.0 (2025-07-31)
+
+* Adds ingress support (#123)
+* Fixes JWT path (#125)
+* Add support for shared user auth
+* Adds launchpad support (#122)
+* update readme.md (#121)
+* Adds jwt support (#118)
+* Adds value to stardog chart for base64 encoded stardog license (#115) (#116)
+* Update CircleCI ubuntu image (#114)
+
 # 2.1.1 (2024-09-19)
 
 * Remove preStop hook that issues server stop to the Stardog pod and rely on SIGTERM from k8s (#111)
