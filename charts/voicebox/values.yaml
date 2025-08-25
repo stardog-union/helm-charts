@@ -17,7 +17,7 @@ containerSecurityContext:
   readOnlyRootFilesystem: true
 service:
   type: ClusterIP
-  port: 8080
+  port: 8000
   loadBalancerIP: ""
   annotations: {}
 image:
@@ -46,7 +46,13 @@ configFile: |
 environmentVariables:
   AZURE_API_KEY: "azure-api-key"
   PRODUCTION: 1 # 0 for development, 1 for production
-resources: {}
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "4Gi"
+    cpu: "1"
 nodeSelector: {}
 affinity: {}
 tolerations: []

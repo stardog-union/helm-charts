@@ -5,9 +5,11 @@
 # The service type to use for Launchpad
 service:
   type: LoadBalancer
-  port: 8080
   annotations: {}
   # loadBalancerIP: 0.0.0.0
+
+ports:
+  http: 8080
 
 ingress:
   enabled: false

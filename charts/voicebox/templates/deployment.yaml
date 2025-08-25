@@ -61,7 +61,7 @@ spec:
               subPath: vbx_config.json
               readOnly: true
           resources:
-{{- toYaml .Values.resources | indent 12 }}
+{{ toYaml .Values.resources | indent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
