@@ -38,7 +38,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "voicebox.fullname" . }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           securityContext: 
             {{- toYaml .Values.containerSecurityContext | nindent 10 }}
