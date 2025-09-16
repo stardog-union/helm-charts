@@ -28,6 +28,9 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
         app.kubernetes.io/component: server
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "stardog.fullname" . }}
+      {{- end }}
       {{- with .Values.tolerations }}
       tolerations: {{ toYaml . | nindent 8 }}
       {{- end }}
