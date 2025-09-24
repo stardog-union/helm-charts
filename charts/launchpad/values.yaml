@@ -77,3 +77,7 @@ env:
 
   # Voicebox configuration
   VOICEBOX_SERVICE_ENDPOINT: ""
+
+serviceAccount:
+  enabled: true
+  annotations: {}

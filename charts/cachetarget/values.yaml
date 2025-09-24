@@ -96,3 +96,7 @@ additionalStardogProperties: |
 cluster:
   name: stardog-cluster
   port: 5820
+
+serviceAccount:
+  enabled: true
+  annotations: {}

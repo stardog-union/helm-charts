@@ -22,6 +22,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "stardog.fullname" . }}
+      {{- end }}
 {{ if .Values.securityContext.enabled }}
       securityContext:
         runAsUser: {{ .Values.securityContext.runAsUser }}

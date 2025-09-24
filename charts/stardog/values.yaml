@@ -190,3 +190,7 @@ jwtConfig:
   enabled: false
   azureClientId: ""
   azureTenantId: ""
+
+serviceAccount:
+  enabled: true
+  annotations: {}

@@ -21,6 +21,9 @@ spec:
       labels:
         app: {{ include "cachetarget.fullname" . }}
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "cachetarget.fullname" . }}
+      {{- end }}
       containers:
       - name: {{ include "cachetarget.fullname" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
