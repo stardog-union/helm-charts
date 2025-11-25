@@ -165,6 +165,7 @@ zookeeper:
       memory: 2Gi
       cpu: 1
   image:
+    registry: public.ecr.aws
     repository: bitnami/zookeeper
     tag: 3.8.4-debian-12-r17
     pullPolicy: IfNotPresent
