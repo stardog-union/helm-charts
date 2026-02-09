@@ -109,8 +109,9 @@ Make sure you have a proper stardog license called `stardog-license-key.bin` loc
 kubectl -n <your-namespace> create secret generic stardog-license --from-file stardog-license-key.bin=stardog-license-key.bin
 ```
 ## Replace the Stardog license
-If your license is about to expire, you can replace you existing license with a new one using the following command.
+If your license is about to expire, you can replace you existing license with a new one by first deleting the existing secret and then creating a new one using the following commands.
 ```
+kubectl -n <your-namespace> delete secret stardog-license
 kubectl -n <your-namespace> create secret generic stardog-license --from-file stardog-license-key.bin=/path/to/new/stardog-license-key.bin
 ```
 
