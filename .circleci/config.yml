@@ -1,6 +1,6 @@
 version: 2
 jobs:
-   build:
+   build:https://github.com/Dridge/helm-charts/new/develop/.circleci
      machine:
        image: ubuntu-2204:2024.05.1
 
@@ -18,7 +18,7 @@ jobs:
        - run:
            name: Setup Helm
            command: |
-             curl -Lo helm.tar.gz https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
+             curl -Lo helm.tar.gz https://get.helm.sh/helm-v4.0.0-linux-amd64.tar.gz
              tar zxf helm.tar.gz
              chmod +x linux-amd64/helm
              sudo mv linux-amd64/helm /usr/local/bin/
