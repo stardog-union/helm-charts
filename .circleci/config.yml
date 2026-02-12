@@ -1,6 +1,6 @@
 version: 2
 jobs:
-   build:https://github.com/Dridge/helm-charts/new/develop/.circleci
+   build:
      machine:
        image: ubuntu-2204:2024.05.1
 
