@@ -1,9 +1,12 @@
-[!WARNING]
-## ⚠️ This Helm chart has been officially deprecated and replaced by [kube-stardog-stack](https://github.com/stardog-oss/kube-stardog-stack/).
-
-No further enhancements, fixes, or updates will be made to this version. It will remain available for a limited time solely to allow existing customers sufficient time to plan and complete their migration. After this transition period, it will be fully retired.
-
-We strongly encourage all users to begin planning their migration to [kube-stardog-stack](https://github.com/stardog-oss/kube-stardog-stack/) to ensure continued improvements, feature updates, and long-term maintainability.
+> [!WARNING]
+> This Helm chart has been officially deprecated and replaced by [kube-stardog-stack](https://github.com/stardog-oss/kube-stardog-stack/).
+> 
+> No further enhancements, fixes, or updates will be made to this version. It will remain available for a limited time solely to allow existing customers sufficient time to plan and complete their migration. After this transition period, it will be fully retired.
+> 
+> We strongly encourage all users to begin planning their migration to [kube-stardog-stack](https://github.com/stardog-oss/kube-stardog-stack/) to ensure continued improvements, feature updates, and long-term maintainability.
+>
+> **Deprecated as of:** 2026-03-05
+> **Reason::** replaced by [kube-stardog-stack](https://github.com/stardog-oss/kube-stardog-stack/)
 
 Stardog Helm Charts
 ===================
